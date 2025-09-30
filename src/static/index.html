@@ -201,9 +201,14 @@
                 <div class="section-header">
                     <h1>Business Process Evaluation</h1>
                     <p>Comprehensive analysis of HL Stearns business processes</p>
-                    <button class="btn-primary" onclick="addProcess()">
-                        <i class="fas fa-plus"></i> Add Process
-                    </button>
+                    <div class="header-actions">
+                        <button class="btn-primary" onclick="addProcess()">
+                            <i class="fas fa-plus"></i> Add Process
+                        </button>
+                        <button class="btn-secondary admin-only" onclick="editProcessDropdowns()">
+                            <i class="fas fa-cog"></i> Edit Dropdown Options
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="processes-container">

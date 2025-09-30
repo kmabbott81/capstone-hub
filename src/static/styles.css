@@ -977,9 +977,21 @@ body {
     }
 }
 
+/* Header actions for multiple buttons */
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Admin-only elements hidden by default */
+.admin-only {
+    display: none;
+}
+
 /* Role-specific body classes */
 body.role-admin .admin-only {
-    display: block !important;
+    display: inline-block !important;
 }
 
 body.role-viewer .admin-only {

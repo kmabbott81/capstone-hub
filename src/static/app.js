@@ -701,3 +701,333 @@ const formStyles = `
 // Inject form styles
 document.head.insertAdjacentHTML('beforeend', formStyles);
 
+// ============================================
+// DROPDOWN OPTIONS MANAGEMENT
+// ============================================
+
+// Default dropdown options
+const defaultDropdownOptions = {
+    departments: ['Sales', 'Operations', 'Customer Service', 'Finance', 'IT'],
+    automationPotential: ['High', 'Medium', 'Low']
+};
+
+// Load dropdown options from localStorage or use defaults
+function getDropdownOptions() {
+    const stored = localStorage.getItem('processDropdownOptions');
+    if (stored) {
+        return JSON.parse(stored);
+    }
+    return { ...defaultDropdownOptions };
+}
+
+// Save dropdown options to localStorage
+function saveDropdownOptions(options) {
+    localStorage.setItem('processDropdownOptions', JSON.stringify(options));
+}
+
+// Function to edit process dropdowns
+function editProcessDropdowns() {
+    const options = getDropdownOptions();
+
+    const form = `
+        <form id="dropdown-options-form">
+            <div class="dropdown-editor-section">
+                <h3 style="margin-bottom: 1rem; color: var(--gray-700);">Departments</h3>
+                <div id="departments-list" class="options-list">
+                    ${options.departments.map((dept, index) => `
+                        <div class="option-item">
+                            <input type="text" value="${dept}" class="form-control" data-type="department" data-index="${index}">
+                            <button type="button" class="btn-danger-sm" onclick="removeOption('department', ${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button type="button" class="btn-secondary-sm" onclick="addOption('department')">
+                    <i class="fas fa-plus"></i> Add Department
+                </button>
+            </div>
+
+            <div class="dropdown-editor-section" style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--gray-700);">Automation Potential</h3>
+                <div id="automation-list" class="options-list">
+                    ${options.automationPotential.map((auto, index) => `
+                        <div class="option-item">
+                            <input type="text" value="${auto}" class="form-control" data-type="automation" data-index="${index}">
+                            <button type="button" class="btn-danger-sm" onclick="removeOption('automation', ${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button type="button" class="btn-secondary-sm" onclick="addOption('automation')">
+                    <i class="fas fa-plus"></i> Add Option
+                </button>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
+                <button type="button" class="btn-secondary" onclick="resetDropdownOptions()">Reset to Defaults</button>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+        </form>
+
+        <style>
+        .dropdown-editor-section {
+            margin-bottom: 1.5rem;
+        }
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .option-item {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .option-item input {
+            flex: 1;
+        }
+        .btn-danger-sm, .btn-secondary-sm {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-danger-sm {
+            background-color: var(--error-color);
+            color: white;
+        }
+        .btn-danger-sm:hover {
+            background-color: #dc2626;
+        }
+        .btn-secondary-sm {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+        }
+        .btn-secondary-sm:hover {
+            background-color: var(--gray-300);
+        }
+        </style>
+    `;
+
+    capstoneHub.showModal('Edit Dropdown Options', form);
+
+    // Add form submit handler
+    setTimeout(() => {
+        document.getElementById('dropdown-options-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveDropdownChanges();
+        });
+    }, 100);
+}
+
+// Add new option to list
+function addOption(type) {
+    const listId = type === 'department' ? 'departments-list' : 'automation-list';
+    const list = document.getElementById(listId);
+    const currentCount = list.querySelectorAll('.option-item').length;
+
+    const newItem = document.createElement('div');
+    newItem.className = 'option-item';
+    newItem.innerHTML = `
+        <input type="text" value="" class="form-control" data-type="${type}" data-index="${currentCount}" placeholder="Enter new ${type === 'department' ? 'department' : 'option'}">
+        <button type="button" class="btn-danger-sm" onclick="removeOption('${type}', ${currentCount})">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    list.appendChild(newItem);
+}
+
+// Remove option from list
+function removeOption(type, index) {
+    const listId = type === 'department' ? 'departments-list' : 'automation-list';
+    const list = document.getElementById(listId);
+    const items = list.querySelectorAll('.option-item');
+
+    if (items.length > 1) {
+        items[index].remove();
+        // Re-index remaining items
+        const remainingItems = list.querySelectorAll('.option-item');
+        remainingItems.forEach((item, newIndex) => {
+            const input = item.querySelector('input');
+            const button = item.querySelector('button');
+            input.setAttribute('data-index', newIndex);
+            button.setAttribute('onclick', `removeOption('${type}', ${newIndex})`);
+        });
+    } else {
+        alert('You must have at least one option.');
+    }
+}
+
+// Save dropdown changes
+function saveDropdownChanges() {
+    const departments = [];
+    const automation = [];
+
+    // Collect department options
+    document.querySelectorAll('input[data-type="department"]').forEach(input => {
+        const value = input.value.trim();
+        if (value) departments.push(value);
+    });
+
+    // Collect automation options
+    document.querySelectorAll('input[data-type="automation"]').forEach(input => {
+        const value = input.value.trim();
+        if (value) automation.push(value);
+    });
+
+    if (departments.length === 0 || automation.length === 0) {
+        alert('Please ensure all dropdown types have at least one option.');
+        return;
+    }
+
+    // Save to localStorage
+    saveDropdownOptions({
+        departments: departments,
+        automationPotential: automation
+    });
+
+    // Update all dropdowns on the page
+    updateAllDropdowns();
+
+    // Close modal
+    capstoneHub.closeModal();
+
+    // Show success message
+    showNotification('Dropdown options updated successfully!', 'success');
+}
+
+// Reset to default options
+function resetDropdownOptions() {
+    if (confirm('Are you sure you want to reset to default options? This will remove any custom options you\'ve added.')) {
+        saveDropdownOptions(defaultDropdownOptions);
+        capstoneHub.closeModal();
+        showNotification('Dropdown options reset to defaults.', 'success');
+    }
+}
+
+// Update all dropdowns with current options
+function updateAllDropdowns() {
+    const options = getDropdownOptions();
+
+    // Update department filter
+    const deptFilter = document.getElementById('department-filter');
+    if (deptFilter) {
+        const currentValue = deptFilter.value;
+        deptFilter.innerHTML = '<option value="">All Departments</option>' +
+            options.departments.map(dept => `<option value="${dept}">${dept}</option>`).join('');
+        deptFilter.value = currentValue;
+    }
+
+    // Update automation filter
+    const autoFilter = document.getElementById('automation-filter');
+    if (autoFilter) {
+        const currentValue = autoFilter.value;
+        autoFilter.innerHTML = '<option value="">Automation Potential</option>' +
+            options.automationPotential.map(auto => `<option value="${auto}">${auto}</option>`).join('');
+        autoFilter.value = currentValue;
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background-color: ${type === 'success' ? 'var(--success-color)' : 'var(--primary-color)'};
+        color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease-out;
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Override the addProcess function to use dynamic options
+const originalAddProcess = capstoneHub.addProcess;
+capstoneHub.addProcess = function() {
+    const options = getDropdownOptions();
+
+    const form = `
+        <form id="process-form">
+            <div class="form-group mb-3">
+                <label for="process-name">Process Name</label>
+                <input type="text" id="process-name" class="form-control" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="process-department">Department</label>
+                <select id="process-department" class="form-control" required>
+                    <option value="">Select Department</option>
+                    ${options.departments.map(dept => `<option value="${dept}">${dept}</option>`).join('')}
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="process-description">Description</label>
+                <textarea id="process-description" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="form-group mb-3">
+                <label for="process-automation">Automation Potential</label>
+                <select id="process-automation" class="form-control">
+                    <option value="">Select Potential</option>
+                    ${options.automationPotential.map(auto => `<option value="${auto}">${auto}</option>`).join('')}
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
+                <button type="submit" class="btn-primary">Add Process</button>
+            </div>
+        </form>
+    `;
+    this.showModal('Add Business Process', form);
+};
+
+// Initialize dropdowns on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateAllDropdowns();
+});
+
+// Add animation styles
+const animationStyles = `
+<style>
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+</style>
+`;
+document.head.insertAdjacentHTML('beforeend', animationStyles);
+
