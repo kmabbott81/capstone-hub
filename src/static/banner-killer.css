@@ -1,0 +1,149 @@
+/* AGGRESSIVE BANNER REMOVAL */
+/* Hide any element with view-only text */
+*:contains("view-only"),
+*:contains("View-only"),
+*:contains("VIEW-ONLY") {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Hide common banner selectors */
+.banner,
+.notification,
+.alert,
+.info-bar,
+.status-bar,
+.access-bar,
+.view-banner,
+.view-only-banner,
+.notification-bar,
+.alert-bar,
+.info-banner,
+.status-banner,
+[class*="banner"],
+[class*="notification"],
+[class*="alert"],
+[class*="view-only"],
+[class*="access"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Hide by background color (green banners) */
+div[style*="background: green"],
+div[style*="background-color: green"],
+div[style*="background: #4CAF50"],
+div[style*="background-color: #4CAF50"],
+div[style*="background: #2E7D32"],
+div[style*="background-color: #2E7D32"],
+div[style*="background: rgb(76, 175, 80)"],
+div[style*="background-color: rgb(76, 175, 80)"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Hide by position (top banners) */
+div[style*="position: fixed"][style*="top: 0"],
+div[style*="position: absolute"][style*="top: 0"],
+div[style*="position: sticky"][style*="top: 0"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Admin Status Indicator Styles - Small and Bottom Right */
+.admin-status-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 80px; /* Next to where login button was */
+    z-index: 10000;
+}
+
+.admin-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.admin-icon {
+    font-size: 12px;
+}
+
+.admin-text {
+    font-weight: 600;
+    font-size: 10px;
+}
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Floating Admin Login Button */
+.floating-admin-login {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+}
+
+.floating-login-btn {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.floating-login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.floating-login-btn:active {
+    transform: translateY(0);
+}
+
+/* Hide admin login button when admin is logged in */
+.role-admin .floating-admin-login {
+    display: none !important;
+}
+

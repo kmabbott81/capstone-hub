@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Capstone Hub - HL Stearns AI Strategy</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="banner-killer.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Capstone Hub</span>
+                </div>
+                <div class="project-info">
+                    <h4>HL Stearns AI Strategy</h4>
+                    <p>Kyle Mabbott - OEMBA 2025</p>
+                </div>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-section">
+                    <h5>Project Management</h5>
+                    <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#deliverables" class="nav-item" data-section="deliverables">
+                        <i class="fas fa-tasks"></i>
+                        <span>Deliverables Timeline</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <h5>Business Analysis</h5>
+                    <a href="#processes" class="nav-item" data-section="processes">
+                        <i class="fas fa-sitemap"></i>
+                        <span>Business Processes</span>
+                    </a>
+                    <a href="#ai-technologies" class="nav-item" data-section="ai-technologies">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Technologies</span>
+                    </a>
+                    <a href="#software-tools" class="nav-item" data-section="software-tools">
+                        <i class="fas fa-tools"></i>
+                        <span>Software & Tech Stack</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <h5>Research & Data</h5>
+                    <a href="#research" class="nav-item" data-section="research">
+                        <i class="fas fa-search"></i>
+                        <span>Research Management</span>
+                    </a>
+                    <a href="#integrations" class="nav-item" data-section="integrations">
+                        <i class="fas fa-plug"></i>
+                        <span>Integrations</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="progress-indicator">
+                    <div class="progress-circle">
+                        <span class="progress-text">75%</span>
+                    </div>
+                    <p>Project Progress</p>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1>Project Dashboard</h1>
+                    <p>Comprehensive overview of your HL Stearns AI Strategy capstone project</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <!-- Key Metrics -->
+                    <div class="metrics-row">
+                        <div class="metric-card">
+                            <div class="metric-icon deliverables">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="deliverables-count">0</h3>
+                                <p>Deliverables</p>
+                                <span class="metric-trend">On Track</span>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon processes">
+                                <i class="fas fa-sitemap"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="processes-count">0</h3>
+                                <p>Business Processes</p>
+                                <span class="metric-trend">Evaluated</span>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon ai-tech">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="ai-tech-count">0</h3>
+                                <p>AI Technologies</p>
+                                <span class="metric-trend">Researched</span>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon research">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="research-count">0</h3>
+                                <p>Research Items</p>
+                                <span class="metric-trend">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts and Analytics -->
+                    <div class="analytics-row">
+                        <div class="chart-card">
+                            <h3>Deliverables Timeline</h3>
+                            <div class="chart-container">
+                                <canvas id="deliverables-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <h3>Process Evaluation Status</h3>
+                            <div class="chart-container">
+                                <canvas id="processes-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="activity-card">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-list" id="recent-activity">
+                            <!-- Activity items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Deliverables Timeline Section -->
+            <section id="deliverables" class="content-section">
+                <div class="section-header">
+                    <h1>Capstone Deliverables Timeline</h1>
+                    <p>Complete course layout and milestone tracking</p>
+                    <button class="btn-primary" onclick="addDeliverable()">
+                        <i class="fas fa-plus"></i> Add Deliverable
+                    </button>
+                </div>
+                
+                <div class="timeline-container">
+                    <div class="timeline-filters">
+                        <select id="phase-filter">
+                            <option value="">All Phases</option>
+                            <option value="Foundation">Foundation & Planning</option>
+                            <option value="Research">Research & Analysis</option>
+                            <option value="Implementation">Implementation</option>
+                            <option value="Evaluation">Evaluation & Testing</option>
+                            <option value="Final">Final Report & Presentation</option>
+                        </select>
+                        
+                        <select id="status-filter">
+                            <option value="">All Status</option>
+                            <option value="Not Started">Not Started</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Overdue">Overdue</option>
+                        </select>
+                    </div>
+                    
+                    <div class="timeline-view" id="deliverables-timeline">
+                        <!-- Timeline items will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Business Processes Section -->
+            <section id="processes" class="content-section">
+                <div class="section-header">
+                    <h1>Business Process Evaluation</h1>
+                    <p>Comprehensive analysis of HL Stearns business processes</p>
+                    <button class="btn-primary" onclick="addProcess()">
+                        <i class="fas fa-plus"></i> Add Process
+                    </button>
+                </div>
+                
+                <div class="processes-container">
+                    <div class="processes-filters">
+                        <input type="text" id="process-search" placeholder="Search processes...">
+                        <select id="department-filter">
+                            <option value="">All Departments</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Operations">Operations</option>
+                            <option value="Customer Service">Customer Service</option>
+                            <option value="Finance">Finance</option>
+                            <option value="IT">IT</option>
+                        </select>
+                        <select id="automation-filter">
+                            <option value="">Automation Potential</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    
+                    <div class="processes-grid" id="processes-grid">
+                        <!-- Process cards will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Technologies Section -->
+            <section id="ai-technologies" class="content-section">
+                <div class="section-header">
+                    <h1>AI Technologies Catalog</h1>
+                    <p>Comprehensive categorization of AI platforms and tools</p>
+                    <button class="btn-primary" onclick="addAITechnology()">
+                        <i class="fas fa-plus"></i> Add AI Technology
+                    </button>
+                </div>
+                
+                <div class="ai-tech-container">
+                    <div class="ai-categories">
+                        <div class="category-tabs">
+                            <button class="tab-btn active" data-category="all">All Categories</button>
+                            <button class="tab-btn" data-category="Generative">Generative AI</button>
+                            <button class="tab-btn" data-category="Agentic">Agentic AI</button>
+                            <button class="tab-btn" data-category="Embedded">Embedded AI</button>
+                            <button class="tab-btn" data-category="Predictive">Predictive AI</button>
+                            <button class="tab-btn" data-category="Computer Vision">Computer Vision</button>
+                            <button class="tab-btn" data-category="NLP">Natural Language Processing</button>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-tech-grid" id="ai-tech-grid">
+                        <!-- AI technology cards will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Software Tools Section -->
+            <section id="software-tools" class="content-section">
+                <div class="section-header">
+                    <h1>Software & Tech Stack Manager</h1>
+                    <p>Core and optional tools evaluation for HL Stearns</p>
+                    <button class="btn-primary" onclick="addSoftwareTool()">
+                        <i class="fas fa-plus"></i> Add Software Tool
+                    </button>
+                </div>
+                
+                <div class="software-container">
+                    <div class="tool-categories">
+                        <div class="category-grid">
+                            <div class="category-section">
+                                <h3>Core Systems</h3>
+                                <div class="tools-list" id="core-tools">
+                                    <!-- Core tools will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <div class="category-section">
+                                <h3>Optional Tools</h3>
+                                <div class="tools-list" id="optional-tools">
+                                    <!-- Optional tools will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <div class="category-section">
+                                <h3>Integration Tools</h3>
+                                <div class="tools-list" id="integration-tools">
+                                    <!-- Integration tools will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Research Management Section -->
+            <section id="research" class="content-section">
+                <div class="section-header">
+                    <h1>Research Management Center</h1>
+                    <p>Primary and secondary research with suggested questions and tracking</p>
+                    <button class="btn-primary" onclick="addResearchItem()">
+                        <i class="fas fa-plus"></i> Add Research Item
+                    </button>
+                </div>
+                
+                <div class="research-container">
+                    <div class="research-tabs">
+                        <button class="tab-btn active" data-type="all">All Research</button>
+                        <button class="tab-btn" data-type="Primary">Primary Research</button>
+                        <button class="tab-btn" data-type="Secondary">Secondary Research</button>
+                        <button class="tab-btn" data-type="templates">Question Templates</button>
+                    </div>
+                    
+                    <div class="research-content" id="research-content">
+                        <!-- Research items will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Integrations Section -->
+            <section id="integrations" class="content-section">
+                <div class="section-header">
+                    <h1>Third-Party Integrations</h1>
+                    <p>Notion, Microsoft, Google, and other platform connections</p>
+                    <button class="btn-primary" onclick="addIntegration()">
+                        <i class="fas fa-plus"></i> Add Integration
+                    </button>
+                </div>
+                
+                <div class="integrations-container">
+                    <div class="integration-platforms">
+                        <div class="platform-card notion">
+                            <div class="platform-header">
+                                <i class="fab fa-notion"></i>
+                                <h3>Notion</h3>
+                                <span class="status-badge connected">Connected</span>
+                            </div>
+                            <p>Research documentation and knowledge base</p>
+                            <button class="btn-secondary">Configure</button>
+                        </div>
+                        
+                        <div class="platform-card microsoft">
+                            <div class="platform-header">
+                                <i class="fab fa-microsoft"></i>
+                                <h3>Microsoft 365</h3>
+                                <span class="status-badge pending">Pending</span>
+                            </div>
+                            <p>Document storage and collaboration</p>
+                            <button class="btn-secondary">Setup</button>
+                        </div>
+                        
+                        <div class="platform-card google">
+                            <div class="platform-header">
+                                <i class="fab fa-google"></i>
+                                <h3>Google Workspace</h3>
+                                <span class="status-badge disconnected">Disconnected</span>
+                            </div>
+                            <p>Sheets, Docs, and Drive integration</p>
+                            <button class="btn-secondary">Connect</button>
+                        </div>
+                    </div>
+                    
+                    <div class="integration-logs" id="integration-logs">
+                        <!-- Integration activity logs will be populated here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for adding/editing items -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Add Item</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Modal content will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="auth-fixed.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

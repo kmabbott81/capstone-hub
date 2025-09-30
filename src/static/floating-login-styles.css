@@ -1,0 +1,69 @@
+/* Floating Admin Login Button */
+.floating-admin-login {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.floating-login-btn {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.floating-login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.floating-login-btn:active {
+    transform: translateY(0);
+}
+
+/* Remove old admin login section styles */
+.admin-login-section {
+    display: none;
+}
+
+/* Hide view-only banner */
+.view-only-banner {
+    display: none !important;
+}
+
+/* Hide any banner with view-only text */
+div[class*="banner"]:contains("view-only"),
+div[class*="view"]:contains("view-only"),
+.banner,
+.view-banner,
+.access-banner {
+    display: none !important;
+}
+
+/* Hide any green notification bars */
+.notification-bar,
+.alert-bar,
+.info-bar,
+div[style*="background: green"],
+div[style*="background-color: green"],
+div[style*="background:#4CAF50"],
+div[style*="background-color:#4CAF50"] {
+    display: none !important;
+}
+
+/* Remove view-only indicators */
+.role-viewer .section-content::before {
+    display: none !important;
+}
+
