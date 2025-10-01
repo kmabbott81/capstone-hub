@@ -6,12 +6,12 @@ research_items_bp = Blueprint('research_items', __name__)
 # In-memory storage for demonstration (replace with database in production)
 research_data = []
 
-@research_items_bp.route('/research-items', methods=['GET'])
+@research_items_bp.route('/api/research-items', methods=['GET'])
 def get_research_items():
     """Get all research items"""
     return jsonify(research_data)
 
-@research_items_bp.route('/research-items', methods=['POST'])
+@research_items_bp.route('/api/research-items', methods=['POST'])
 def create_research_item():
     """Create a new research item"""
     data = request.get_json()
@@ -51,7 +51,7 @@ def create_research_item():
     research_data.append(research_item)
     return jsonify(research_item), 201
 
-@research_items_bp.route('/research-items/<int:item_id>', methods=['PUT'])
+@research_items_bp.route('/api/research-items/<int:item_id>', methods=['PUT'])
 def update_research_item(item_id):
     """Update an existing research item"""
     data = request.get_json()
@@ -91,14 +91,14 @@ def update_research_item(item_id):
     
     return jsonify({'error': 'Research item not found'}), 404
 
-@research_items_bp.route('/research-items/<int:item_id>', methods=['DELETE'])
+@research_items_bp.route('/api/research-items/<int:item_id>', methods=['DELETE'])
 def delete_research_item(item_id):
     """Delete a research item"""
     global research_data
     research_data = [r for r in research_data if r['id'] != item_id]
     return jsonify({'message': 'Research item deleted successfully'})
 
-@research_items_bp.route('/research-items/methods', methods=['GET'])
+@research_items_bp.route('/api/research-items/methods', methods=['GET'])
 def get_research_methods():
     """Get available research methods"""
     methods = {
@@ -125,7 +125,7 @@ def get_research_methods():
     }
     return jsonify(methods)
 
-@research_items_bp.route('/research-items/suggested-questions', methods=['GET'])
+@research_items_bp.route('/api/research-items/suggested-questions', methods=['GET'])
 def get_suggested_questions():
     """Get suggested research questions by category"""
     questions = {
@@ -172,7 +172,7 @@ def get_suggested_questions():
     }
     return jsonify(questions)
 
-@research_items_bp.route('/research-items/data-sources', methods=['GET'])
+@research_items_bp.route('/api/research-items/data-sources', methods=['GET'])
 def get_data_sources():
     """Get suggested data sources"""
     sources = {
