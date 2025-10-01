@@ -409,6 +409,53 @@ class CapstoneHub {
             </form>
         `;
         this.showModal('Add Deliverable', form);
+
+        // Add form submit handler
+        setTimeout(() => {
+            const formElement = document.getElementById('deliverable-form');
+            if (formElement) {
+                formElement.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.saveDeliverable();
+                });
+            }
+        }, 100);
+    }
+
+    async saveDeliverable() {
+        const title = document.getElementById('deliverable-title').value;
+        const description = document.getElementById('deliverable-description').value;
+        const phase = document.getElementById('deliverable-phase').value;
+        const dueDate = document.getElementById('deliverable-due-date').value;
+
+        try {
+            const response = await fetch('/api/deliverables', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: title,
+                    description: description,
+                    phase: phase,
+                    due_date: dueDate
+                })
+            });
+
+            if (response.ok) {
+                const newItem = await response.json();
+                this.data.deliverables.push(newItem);
+                this.closeModal();
+                this.loadDeliverables();
+                this.updateDashboard();
+                showNotification('Deliverable added successfully!', 'success');
+            } else {
+                showNotification('Error adding deliverable', 'error');
+            }
+        } catch (error) {
+            console.error('Error saving deliverable:', error);
+            showNotification('Error adding deliverable', 'error');
+        }
     }
 
     addProcess() {
@@ -449,6 +496,53 @@ class CapstoneHub {
             </form>
         `;
         this.showModal('Add Business Process', form);
+
+        // Add form submit handler
+        setTimeout(() => {
+            const formElement = document.getElementById('process-form');
+            if (formElement) {
+                formElement.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.saveProcess();
+                });
+            }
+        }, 100);
+    }
+
+    async saveProcess() {
+        const name = document.getElementById('process-name').value;
+        const department = document.getElementById('process-department').value;
+        const description = document.getElementById('process-description').value;
+        const automationPotential = document.getElementById('process-automation').value;
+
+        try {
+            const response = await fetch('/api/business-processes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    department: department,
+                    description: description,
+                    automation_potential: automationPotential
+                })
+            });
+
+            if (response.ok) {
+                const newItem = await response.json();
+                this.data.processes.push(newItem);
+                this.closeModal();
+                this.loadProcesses();
+                this.updateDashboard();
+                showNotification('Business process added successfully!', 'success');
+            } else {
+                showNotification('Error adding business process', 'error');
+            }
+        } catch (error) {
+            console.error('Error saving business process:', error);
+            showNotification('Error adding business process', 'error');
+        }
     }
 
     addAITechnology() {
@@ -485,6 +579,53 @@ class CapstoneHub {
             </form>
         `;
         this.showModal('Add AI Technology', form);
+
+        // Add form submit handler
+        setTimeout(() => {
+            const formElement = document.getElementById('ai-tech-form');
+            if (formElement) {
+                formElement.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.saveAITechnology();
+                });
+            }
+        }, 100);
+    }
+
+    async saveAITechnology() {
+        const name = document.getElementById('ai-tech-name').value;
+        const category = document.getElementById('ai-tech-category').value;
+        const provider = document.getElementById('ai-tech-provider').value;
+        const description = document.getElementById('ai-tech-description').value;
+
+        try {
+            const response = await fetch('/api/ai-technologies', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    category: category,
+                    provider: provider,
+                    description: description
+                })
+            });
+
+            if (response.ok) {
+                const newItem = await response.json();
+                this.data.aiTechnologies.push(newItem);
+                this.closeModal();
+                this.loadAITechnologies();
+                this.updateDashboard();
+                showNotification('AI technology added successfully!', 'success');
+            } else {
+                showNotification('Error adding AI technology', 'error');
+            }
+        } catch (error) {
+            console.error('Error saving AI technology:', error);
+            showNotification('Error adding AI technology', 'error');
+        }
     }
 
     addSoftwareTool() {
@@ -526,6 +667,53 @@ class CapstoneHub {
             </form>
         `;
         this.showModal('Add Software Tool', form);
+
+        // Add form submit handler
+        setTimeout(() => {
+            const formElement = document.getElementById('software-tool-form');
+            if (formElement) {
+                formElement.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.saveSoftwareTool();
+                });
+            }
+        }, 100);
+    }
+
+    async saveSoftwareTool() {
+        const name = document.getElementById('tool-name').value;
+        const category = document.getElementById('tool-category').value;
+        const toolType = document.getElementById('tool-type').value;
+        const description = document.getElementById('tool-description').value;
+
+        try {
+            const response = await fetch('/api/software-tools', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    category: category,
+                    tool_type: toolType,
+                    description: description
+                })
+            });
+
+            if (response.ok) {
+                const newItem = await response.json();
+                this.data.softwareTools.push(newItem);
+                this.closeModal();
+                this.loadSoftwareTools();
+                this.updateDashboard();
+                showNotification('Software tool added successfully!', 'success');
+            } else {
+                showNotification('Error adding software tool', 'error');
+            }
+        } catch (error) {
+            console.error('Error saving software tool:', error);
+            showNotification('Error adding software tool', 'error');
+        }
     }
 
     addResearchItem() {
@@ -653,6 +841,53 @@ class CapstoneHub {
             </form>
         `;
         this.showModal('Add Integration', form);
+
+        // Add form submit handler
+        setTimeout(() => {
+            const formElement = document.getElementById('integration-form');
+            if (formElement) {
+                formElement.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.saveIntegration();
+                });
+            }
+        }, 100);
+    }
+
+    async saveIntegration() {
+        const name = document.getElementById('integration-name').value;
+        const platform = document.getElementById('integration-platform').value;
+        const integrationType = document.getElementById('integration-type').value;
+        const purpose = document.getElementById('integration-purpose').value;
+
+        try {
+            const response = await fetch('/api/integrations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    platform: platform,
+                    integration_type: integrationType,
+                    purpose: purpose
+                })
+            });
+
+            if (response.ok) {
+                const newItem = await response.json();
+                this.data.integrations.push(newItem);
+                this.closeModal();
+                this.loadIntegrations();
+                this.updateDashboard();
+                showNotification('Integration added successfully!', 'success');
+            } else {
+                showNotification('Error adding integration', 'error');
+            }
+        } catch (error) {
+            console.error('Error saving integration:', error);
+            showNotification('Error adding integration', 'error');
+        }
     }
 }
 
@@ -1053,6 +1288,17 @@ capstoneHub.addProcess = function() {
         </form>
     `;
     this.showModal('Add Business Process', form);
+
+    // Add form submit handler
+    setTimeout(() => {
+        const formElement = document.getElementById('process-form');
+        if (formElement) {
+            formElement.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.saveProcess();
+            });
+        }
+    }, 100);
 };
 
 // Initialize dropdowns on page load
