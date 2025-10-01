@@ -28,15 +28,15 @@ app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 CORS(app)
 
-app.register_blueprint(user_bp, url_prefix='/api')
-app.register_blueprint(deliverables_bp, url_prefix='/api')
-app.register_blueprint(business_processes_bp, url_prefix='/api')
-app.register_blueprint(ai_technologies_bp, url_prefix='/api')
-app.register_blueprint(software_tools_bp, url_prefix='/api')
-app.register_blueprint(research_items_bp, url_prefix='/api')
-app.register_blueprint(integrations_bp, url_prefix='/api')
-app.register_blueprint(advanced_features_bp, url_prefix='/api')
-app.register_blueprint(auth_bp, url_prefix='/api')
+app.register_blueprint(user_bp)
+app.register_blueprint(deliverables_bp)
+app.register_blueprint(business_processes_bp)
+app.register_blueprint(ai_technologies_bp)
+app.register_blueprint(software_tools_bp)
+app.register_blueprint(research_items_bp)
+app.register_blueprint(integrations_bp)
+app.register_blueprint(advanced_features_bp)
+app.register_blueprint(auth_bp)
 
 # uncomment if you need to use database
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
