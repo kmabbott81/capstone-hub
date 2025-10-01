@@ -565,6 +565,53 @@ class CapstoneHub {
             </form>
         `;
         this.showModal('Add Research Item', form);
+
+        // Add form submit handler
+        setTimeout(() => {
+            const formElement = document.getElementById('research-form');
+            if (formElement) {
+                formElement.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.saveResearchItem();
+                });
+            }
+        }, 100);
+    }
+
+    async saveResearchItem() {
+        const title = document.getElementById('research-title').value;
+        const researchType = document.getElementById('research-type').value;
+        const researchMethod = document.getElementById('research-method').value;
+        const description = document.getElementById('research-description').value;
+
+        try {
+            const response = await fetch('/api/research-items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: title,
+                    research_type: researchType,
+                    research_method: researchMethod,
+                    description: description
+                })
+            });
+
+            if (response.ok) {
+                const newItem = await response.json();
+                this.data.researchItems.push(newItem);
+                this.closeModal();
+                this.loadResearchItems();
+                this.updateDashboard();
+                showNotification('Research item added successfully!', 'success');
+            } else {
+                showNotification('Error adding research item', 'error');
+            }
+        } catch (error) {
+            console.error('Error saving research item:', error);
+            showNotification('Error adding research item', 'error');
+        }
     }
 
     addIntegration() {
@@ -939,12 +986,22 @@ function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
+
+    let bgColor;
+    if (type === 'success') {
+        bgColor = 'var(--success-color)';
+    } else if (type === 'error') {
+        bgColor = 'var(--error-color)';
+    } else {
+        bgColor = 'var(--primary-color)';
+    }
+
     notification.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
         padding: 1rem 1.5rem;
-        background-color: ${type === 'success' ? 'var(--success-color)' : 'var(--primary-color)'};
+        background-color: ${bgColor};
         color: white;
         border-radius: var(--border-radius);
         box-shadow: var(--shadow-lg);
