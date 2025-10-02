@@ -945,6 +945,86 @@ function closeModal() {
 let capstoneHub;
 document.addEventListener('DOMContentLoaded', () => {
     capstoneHub = new CapstoneHub();
+
+    // Override the addProcess function to use dynamic options (must run after capstoneHub is initialized)
+    const originalAddProcess = capstoneHub.addProcess;
+    capstoneHub.addProcess = function() {
+        const options = getDropdownOptions();
+
+        const form = `
+            <form id="process-form">
+                <div class="form-group mb-3">
+                    <label for="process-name">Process Name</label>
+                    <input type="text" id="process-name" name="name" class="form-control" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="process-description">Description</label>
+                    <textarea id="process-description" name="description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="process-department">Department</label>
+                    <select id="process-department" name="department" class="form-control" required>
+                        <option value="">Select Department...</option>
+                        ${options.departments.map(dept => `<option value="${dept}">${dept}</option>`).join('')}
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="process-automation">Automation Potential</label>
+                    <select id="process-automation" name="automation_potential" class="form-control">
+                        ${options.automationLevels.map(level => `<option value="${level}">${level}</option>`).join('')}
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="process-ai-opportunity">AI Opportunity</label>
+                    <select id="process-ai-opportunity" name="ai_opportunity" class="form-control">
+                        ${options.automationLevels.map(level => `<option value="${level}">${level}</option>`).join('')}
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Process</button>
+                </div>
+            </form>
+        `;
+
+        showModal('Add Business Process', form);
+
+        document.getElementById('process-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                name: document.getElementById('process-name').value,
+                description: document.getElementById('process-description').value,
+                department: document.getElementById('process-department').value,
+                automation_potential: document.getElementById('process-automation').value,
+                ai_opportunity: document.getElementById('process-ai-opportunity').value,
+                status: 'Not Started'
+            };
+
+            try {
+                const response = await fetch('/api/business-processes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    closeModal();
+                    await this.loadProcesses();
+                    showNotification('Business process added successfully!', 'success');
+                } else {
+                    showNotification('Failed to add business process', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding process:', error);
+                showNotification('Error adding business process', 'error');
+            }
+        });
+    };
 });
 
 // Close modal when clicking outside
@@ -1273,59 +1353,7 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// Override the addProcess function to use dynamic options
-const originalAddProcess = capstoneHub.addProcess;
-capstoneHub.addProcess = function() {
-    const options = getDropdownOptions();
-
-    const form = `
-        <form id="process-form">
-            <div class="form-group mb-3">
-                <label for="process-name">Process Name</label>
-                <input type="text" id="process-name" class="form-control" required>
-            </div>
-            <div class="form-group mb-3">
-                <label for="process-department">Department</label>
-                <select id="process-department" class="form-control" required>
-                    <option value="">Select Department</option>
-                    ${options.departments.map(dept => `<option value="${dept}">${dept}</option>`).join('')}
-                </select>
-            </div>
-            <div class="form-group mb-3">
-                <label for="process-description">Description</label>
-                <textarea id="process-description" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="form-group mb-3">
-                <label for="process-automation">Automation Potential</label>
-                <select id="process-automation" class="form-control">
-                    <option value="">Select Potential</option>
-                    ${options.automationPotential.map(auto => `<option value="${auto}">${auto}</option>`).join('')}
-                </select>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
-                <button type="submit" class="btn-primary">Add Process</button>
-            </div>
-        </form>
-    `;
-    this.showModal('Add Business Process', form);
-
-    // Add form submit handler
-    setTimeout(() => {
-        const formElement = document.getElementById('process-form');
-        if (formElement) {
-            formElement.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                await this.saveProcess();
-            });
-        }
-    }, 100);
-};
-
-// Initialize dropdowns on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateAllDropdowns();
-});
+// Note: addProcess override moved inside DOMContentLoaded listener above (line 949)
 
 // Add animation styles
 const animationStyles = `
