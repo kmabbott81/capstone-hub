@@ -9,20 +9,7 @@ research_items_bp = Blueprint('research_items', __name__)
 def get_research_items():
     """Get all research items"""
     items = ResearchItem.query.all()
-    return jsonify([{
-        'id': item.id,
-        'title': item.title,
-        'description': item.description or '',
-        'research_type': item.research_type,
-        'research_method': item.research_method or '',
-        'completion_status': item.completion_status or 'Not Started',
-        'quality_score': item.quality_score or 0,
-        'relevance_score': item.relevance_score or 0,
-        'credibility_score': item.credibility_score or 0,
-        'priority': item.priority or 'Medium',
-        'created_at': item.created_at.isoformat() if item.created_at else '',
-        'updated_at': item.updated_at.isoformat() if item.updated_at else ''
-    } for item in items])
+    return jsonify([item.to_dict() for item in items])
 
 @research_items_bp.route('/api/research-items', methods=['POST'])
 def create_research_item():
