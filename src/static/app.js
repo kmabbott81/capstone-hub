@@ -918,6 +918,13 @@ function addDeliverable() {
 }
 
 function addProcess() {
+    console.log('[DEBUG] addProcess button clicked');
+    console.log('[DEBUG] capstoneHub object:', capstoneHub);
+    if (!capstoneHub) {
+        console.error('[ERROR] capstoneHub is not defined!');
+        alert('Error: Application not initialized. Please refresh the page.');
+        return;
+    }
     capstoneHub.addProcess();
 }
 
