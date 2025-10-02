@@ -12,16 +12,16 @@ def get_research_items():
     return jsonify([{
         'id': item.id,
         'title': item.title,
-        'description': item.description,
+        'description': item.description or '',
         'research_type': item.research_type,
-        'research_method': item.research_method,
-        'completion_status': item.completion_status,
-        'quality_score': item.quality_score,
-        'relevance_score': item.relevance_score,
-        'credibility_score': item.credibility_score,
-        'priority': item.priority,
-        'created_at': item.created_at.isoformat(),
-        'updated_at': item.updated_at.isoformat()
+        'research_method': item.research_method or '',
+        'completion_status': item.completion_status or 'Not Started',
+        'quality_score': item.quality_score or 0,
+        'relevance_score': item.relevance_score or 0,
+        'credibility_score': item.credibility_score or 0,
+        'priority': item.priority or 'Medium',
+        'created_at': item.created_at.isoformat() if item.created_at else '',
+        'updated_at': item.updated_at.isoformat() if item.updated_at else ''
     } for item in items])
 
 @research_items_bp.route('/api/research-items', methods=['POST'])

@@ -12,14 +12,14 @@ def get_deliverables():
     return jsonify([{
         'id': d.id,
         'title': d.title,
-        'description': d.description,
+        'description': d.description or '',
         'phase': d.phase,
         'due_date': d.due_date.isoformat() if d.due_date else None,
-        'status': d.status,
-        'priority': d.priority,
-        'completion_percentage': d.completion_percentage,
-        'created_at': d.created_at.isoformat(),
-        'updated_at': d.updated_at.isoformat()
+        'status': d.status or 'Not Started',
+        'priority': d.priority or 'Medium',
+        'completion_percentage': d.completion_percentage or 0,
+        'created_at': d.created_at.isoformat() if d.created_at else '',
+        'updated_at': d.updated_at.isoformat() if d.updated_at else ''
     } for d in deliverables])
 
 @deliverables_bp.route('/api/deliverables', methods=['POST'])

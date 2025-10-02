@@ -12,13 +12,13 @@ def get_business_processes():
     return jsonify([{
         'id': p.id,
         'name': p.name,
-        'description': p.description,
-        'department': p.department,
-        'automation_potential': p.automation_potential,
-        'ai_opportunity': p.ai_opportunity,
-        'evaluation_status': p.evaluation_status,
-        'created_at': p.created_at.isoformat(),
-        'updated_at': p.updated_at.isoformat()
+        'description': p.description or '',
+        'department': p.department or '',
+        'automation_potential': p.automation_potential or 'Medium',
+        'ai_opportunity': p.ai_opportunity or 'Medium',
+        'evaluation_status': p.evaluation_status or 'Not Started',
+        'created_at': p.created_at.isoformat() if p.created_at else '',
+        'updated_at': p.updated_at.isoformat() if p.updated_at else ''
     } for p in processes])
 
 @business_processes_bp.route('/api/business-processes', methods=['POST'])
