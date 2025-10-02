@@ -992,7 +992,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </form>
         `;
 
-        showModal('Add Business Process', form);
+        capstoneHub.showModal('Add Business Process', form);
 
         document.getElementById('process-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1013,8 +1013,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    closeModal();
-                    await this.loadProcesses();
+                    capstoneHub.closeModal();
+                    await capstoneHub.loadProcesses();
                     showNotification('Business process added successfully!', 'success');
                 } else {
                     showNotification('Failed to add business process', 'error');
