@@ -1,36 +1,68 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from src.models.deliverable import Deliverable
+from src.models.database import db
 
 deliverables_bp = Blueprint('deliverables', __name__)
-
-# In-memory storage for demonstration (replace with database in production)
-deliverables_data = []
 
 @deliverables_bp.route('/api/deliverables', methods=['GET'])
 def get_deliverables():
     """Get all deliverables"""
-    return jsonify(deliverables_data)
+    deliverables = Deliverable.query.all()
+    return jsonify([{
+        'id': d.id,
+        'title': d.title,
+        'description': d.description,
+        'phase': d.phase,
+        'due_date': d.due_date.isoformat() if d.due_date else None,
+        'status': d.status,
+        'priority': d.priority,
+        'completion_percentage': d.completion_percentage,
+        'created_at': d.created_at.isoformat(),
+        'updated_at': d.updated_at.isoformat()
+    } for d in deliverables])
 
 @deliverables_bp.route('/api/deliverables', methods=['POST'])
 def create_deliverable():
     """Create a new deliverable"""
     data = request.get_json()
-    
-    deliverable = {
-        'id': len(deliverables_data) + 1,
-        'title': data.get('title'),
-        'description': data.get('description', ''),
-        'phase': data.get('phase'),
-        'due_date': data.get('due_date'),
-        'status': data.get('status', 'Not Started'),
-        'priority': data.get('priority', 'Medium'),
-        'completion_percentage': data.get('completion_percentage', 0),
-        'created_at': datetime.now().isoformat(),
-        'updated_at': datetime.now().isoformat()
-    }
-    
-    deliverables_data.append(deliverable)
-    return jsonify(deliverable), 201
+
+    try:
+        due_date = None
+        if data.get('due_date'):
+            try:
+                due_date = datetime.fromisoformat(data.get('due_date').replace('Z', '+00:00')).date()
+            except:
+                pass
+
+        deliverable = Deliverable(
+            title=data.get('title'),
+            description=data.get('description', ''),
+            phase=data.get('phase'),
+            due_date=due_date,
+            status=data.get('status', 'Not Started'),
+            priority=data.get('priority', 'Medium'),
+            completion_percentage=data.get('completion_percentage', 0)
+        )
+
+        db.session.add(deliverable)
+        db.session.commit()
+
+        return jsonify({
+            'id': deliverable.id,
+            'title': deliverable.title,
+            'description': deliverable.description,
+            'phase': deliverable.phase,
+            'due_date': deliverable.due_date.isoformat() if deliverable.due_date else None,
+            'status': deliverable.status,
+            'priority': deliverable.priority,
+            'completion_percentage': deliverable.completion_percentage,
+            'created_at': deliverable.created_at.isoformat(),
+            'updated_at': deliverable.updated_at.isoformat()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @deliverables_bp.route('/api/deliverables/<int:deliverable_id>', methods=['PUT'])
 def update_deliverable(deliverable_id):

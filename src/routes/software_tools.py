@@ -1,54 +1,82 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from src.models.software_tool import SoftwareTool
+from src.models.database import db
 
 software_tools_bp = Blueprint('software_tools', __name__)
-
-# In-memory storage for demonstration (replace with database in production)
-software_tools_data = []
 
 @software_tools_bp.route('/api/software-tools', methods=['GET'])
 def get_software_tools():
     """Get all software tools"""
-    return jsonify(software_tools_data)
+    tools = SoftwareTool.query.all()
+    return jsonify([{
+        'id': tool.id,
+        'name': tool.name,
+        'description': tool.description,
+        'category': tool.category,
+        'vendor': tool.vendor,
+        'tool_type': tool.tool_type,
+        'evaluation_status': tool.evaluation_status,
+        'created_at': tool.created_at.isoformat(),
+        'updated_at': tool.updated_at.isoformat()
+    } for tool in tools])
 
 @software_tools_bp.route('/api/software-tools', methods=['POST'])
 def create_software_tool():
     """Create a new software tool"""
     data = request.get_json()
-    
-    tool = {
-        'id': len(software_tools_data) + 1,
-        'name': data.get('name'),
-        'description': data.get('description', ''),
-        'category': data.get('category'),
-        'tool_type': data.get('tool_type'),  # Core, Optional, Integration
-        'vendor': data.get('vendor', ''),
-        'version': data.get('version', ''),
-        'pricing_model': data.get('pricing_model', ''),
-        'monthly_cost': data.get('monthly_cost', 0),
-        'annual_cost': data.get('annual_cost', 0),
-        'user_licenses': data.get('user_licenses', 0),
-        'features': data.get('features', []),
-        'integrations': data.get('integrations', []),
-        'pros': data.get('pros', []),
-        'cons': data.get('cons', []),
-        'evaluation_status': data.get('evaluation_status', 'Not Evaluated'),
-        'evaluation_score': data.get('evaluation_score', 0),
-        'implementation_complexity': data.get('implementation_complexity', 'Medium'),
-        'training_required': data.get('training_required', False),
-        'support_quality': data.get('support_quality', 'Unknown'),
-        'security_rating': data.get('security_rating', 'Unknown'),
-        'scalability': data.get('scalability', 'Medium'),
-        'business_impact': data.get('business_impact', 'Medium'),
-        'technical_requirements': data.get('technical_requirements', []),
-        'decision_status': data.get('decision_status', 'Under Review'),
-        'notes': data.get('notes', ''),
-        'created_at': datetime.now().isoformat(),
-        'updated_at': datetime.now().isoformat()
-    }
-    
-    software_tools_data.append(tool)
-    return jsonify(tool), 201
+
+    try:
+        tool = SoftwareTool(
+            name=data.get('name'),
+            description=data.get('description', ''),
+            category=data.get('category'),
+            tool_type=data.get('tool_type'),
+            vendor=data.get('vendor', ''),
+            pricing_model=data.get('pricing_model', ''),
+            pricing_details=data.get('pricing_details', ''),
+            features=data.get('features', ''),
+            hl_stearns_fit=data.get('hl_stearns_fit', ''),
+            current_usage=data.get('current_usage', ''),
+            replacement_for=data.get('replacement_for', ''),
+            integration_capabilities=data.get('integration_capabilities', ''),
+            data_migration_complexity=data.get('data_migration_complexity', ''),
+            training_requirements=data.get('training_requirements', ''),
+            support_quality=data.get('support_quality', ''),
+            scalability=data.get('scalability', ''),
+            security_features=data.get('security_features', ''),
+            mobile_support=data.get('mobile_support', False),
+            cloud_based=data.get('cloud_based', True),
+            on_premise_option=data.get('on_premise_option', False),
+            api_quality=data.get('api_quality', ''),
+            customization_level=data.get('customization_level', ''),
+            evaluation_status=data.get('evaluation_status', 'Not Evaluated'),
+            implementation_priority=data.get('implementation_priority', ''),
+            roi_potential=data.get('roi_potential', ''),
+            risk_level=data.get('risk_level', ''),
+            decision_status=data.get('decision_status', ''),
+            pilot_results=data.get('pilot_results', ''),
+            notes=data.get('notes', '')
+        )
+
+        db.session.add(tool)
+        db.session.commit()
+
+        return jsonify({
+            'id': tool.id,
+            'name': tool.name,
+            'description': tool.description,
+            'category': tool.category,
+            'vendor': tool.vendor,
+            'tool_type': tool.tool_type,
+            'evaluation_status': tool.evaluation_status,
+            'created_at': tool.created_at.isoformat(),
+            'updated_at': tool.updated_at.isoformat()
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
 
 @software_tools_bp.route('/api/software-tools/<int:tool_id>', methods=['PUT'])
 def update_software_tool(tool_id):

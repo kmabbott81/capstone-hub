@@ -1,7 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
-db = SQLAlchemy()
+from src.models.database import db
 
 class ResearchItem(db.Model):
     __tablename__ = 'research_items'

@@ -4,7 +4,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, send_from_directory
-from src.models.user import db
+from src.models.database import db
+from src.models.user import User
 from src.models.deliverable import Deliverable
 from src.models.business_process import BusinessProcess
 from src.models.ai_technology import AITechnology
@@ -64,4 +65,4 @@ def serve(path):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=True)

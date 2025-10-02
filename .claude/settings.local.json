@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(taskkill:*)",
+      "Bash(netstat:*)",
+      "Bash(PORT=5001 python:*)",
+      "Bash(git stash:*)",
+      "Bash(git reset:*)",
+      "Bash(git revert:*)",
+      "Bash(findstr:*)",
+      "Read(//c/agentic-ai-project/**)",
+      "Bash(del srcdatabaseapp.db)",
+      "Bash(do sed -i \"s/from flask_sqlalchemy import SQLAlchemy/from src.models.database import db/\" \"$file\")",
+      "Bash(do sed -i \"s/from src\\.models\\.[a-z_]* import.*db$/from src.models.database import db/\" \"$file\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

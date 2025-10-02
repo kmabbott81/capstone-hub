@@ -1,47 +1,57 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from src.models.ai_technology import AITechnology
+from src.models.database import db
 
 ai_technologies_bp = Blueprint('ai_technologies', __name__)
-
-# In-memory storage for demonstration (replace with database in production)
-ai_tech_data = []
 
 @ai_technologies_bp.route('/api/ai-technologies', methods=['GET'])
 def get_ai_technologies():
     """Get all AI technologies"""
-    return jsonify(ai_tech_data)
+    technologies = AITechnology.query.all()
+    return jsonify([tech.to_dict() for tech in technologies])
 
 @ai_technologies_bp.route('/api/ai-technologies', methods=['POST'])
 def create_ai_technology():
     """Create a new AI technology"""
     data = request.get_json()
-    
-    ai_tech = {
-        'id': len(ai_tech_data) + 1,
-        'name': data.get('name'),
-        'description': data.get('description', ''),
-        'category': data.get('category'),
-        'subcategory': data.get('subcategory', ''),
-        'provider': data.get('provider', ''),
-        'platform': data.get('platform', ''),
-        'use_cases': data.get('use_cases', []),
-        'capabilities': data.get('capabilities', []),
-        'limitations': data.get('limitations', []),
-        'pricing_model': data.get('pricing_model', ''),
-        'integration_complexity': data.get('integration_complexity', 'Medium'),
-        'evaluation_status': data.get('evaluation_status', 'Not Evaluated'),
-        'priority': data.get('priority', 'Medium'),
-        'business_impact': data.get('business_impact', 'Medium'),
-        'technical_requirements': data.get('technical_requirements', []),
-        'security_considerations': data.get('security_considerations', []),
-        'roi_potential': data.get('roi_potential', 'Medium'),
-        'implementation_timeline': data.get('implementation_timeline', ''),
-        'created_at': datetime.now().isoformat(),
-        'updated_at': datetime.now().isoformat()
-    }
-    
-    ai_tech_data.append(ai_tech)
-    return jsonify(ai_tech), 201
+
+    try:
+        ai_tech = AITechnology(
+            name=data.get('name'),
+            description=data.get('description', ''),
+            category=data.get('category'),
+            subcategory=data.get('subcategory', ''),
+            platform_provider=data.get('platform_provider', ''),
+            pricing_model=data.get('pricing_model', ''),
+            pricing_details=data.get('pricing_details', ''),
+            use_cases=data.get('use_cases', ''),
+            hl_stearns_applications=data.get('hl_stearns_applications', ''),
+            integration_complexity=data.get('integration_complexity', 'Medium'),
+            technical_requirements=data.get('technical_requirements', ''),
+            data_requirements=data.get('data_requirements', ''),
+            security_considerations=data.get('security_considerations', ''),
+            evaluation_status=data.get('evaluation_status', 'Not Evaluated'),
+            pilot_status=data.get('pilot_status', ''),
+            roi_potential=data.get('roi_potential', 'Medium'),
+            implementation_priority=data.get('implementation_priority', 'Medium'),
+            competitive_advantage=data.get('competitive_advantage', 'Medium'),
+            learning_curve=data.get('learning_curve', 'Medium'),
+            vendor_support=data.get('vendor_support', 'Good'),
+            api_availability=data.get('api_availability', False),
+            custom_training_possible=data.get('custom_training_possible', False),
+            on_premise_option=data.get('on_premise_option', False),
+            compliance_ready=data.get('compliance_ready', False),
+            notes=data.get('notes', '')
+        )
+
+        db.session.add(ai_tech)
+        db.session.commit()
+
+        return jsonify(ai_tech.to_dict()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @ai_technologies_bp.route('/api/ai-technologies/<int:tech_id>', methods=['PUT'])
 def update_ai_technology(tech_id):

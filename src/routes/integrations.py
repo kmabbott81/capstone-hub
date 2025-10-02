@@ -1,58 +1,60 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from src.models.database import db
 
 integrations_bp = Blueprint('integrations', __name__)
-
-# In-memory storage for demonstration (replace with database in production)
-integrations_data = []
 
 @integrations_bp.route('/api/integrations', methods=['GET'])
 def get_integrations():
     """Get all integrations"""
-    return jsonify(integrations_data)
+    integrations = Integration.query.all()
+    return jsonify([{
+        'id': integration.id,
+        'name': integration.name,
+        'platform': integration.platform,
+        'integration_type': integration.integration_type,
+        'purpose': integration.purpose,
+        'setup_status': integration.setup_status,
+        'created_at': integration.created_at.isoformat() if integration.created_at else None,
+        'updated_at': integration.updated_at.isoformat() if integration.updated_at else None
+    } for integration in integrations])
 
 @integrations_bp.route('/api/integrations', methods=['POST'])
 def create_integration():
     """Create a new integration"""
     data = request.get_json()
-    
-    integration = {
-        'id': len(integrations_data) + 1,
-        'name': data.get('name'),
-        'description': data.get('description', ''),
-        'platform': data.get('platform'),
-        'integration_type': data.get('integration_type'),
-        'purpose': data.get('purpose', ''),
-        'status': data.get('status', 'Planned'),
-        'priority': data.get('priority', 'Medium'),
-        'configuration': data.get('configuration', {}),
-        'api_endpoints': data.get('api_endpoints', []),
-        'authentication_method': data.get('authentication_method', ''),
-        'data_sync_frequency': data.get('data_sync_frequency', ''),
-        'data_types': data.get('data_types', []),
-        'error_handling': data.get('error_handling', ''),
-        'monitoring': data.get('monitoring', {}),
-        'security_considerations': data.get('security_considerations', []),
-        'testing_status': data.get('testing_status', 'Not Tested'),
-        'last_sync': data.get('last_sync'),
-        'sync_errors': data.get('sync_errors', []),
-        'performance_metrics': data.get('performance_metrics', {}),
-        'documentation_url': data.get('documentation_url', ''),
-        'contact_person': data.get('contact_person', ''),
-        'implementation_date': data.get('implementation_date'),
-        'maintenance_schedule': data.get('maintenance_schedule', ''),
-        'backup_procedures': data.get('backup_procedures', ''),
-        'rollback_plan': data.get('rollback_plan', ''),
-        'cost': data.get('cost', 0),
-        'roi_metrics': data.get('roi_metrics', {}),
-        'user_feedback': data.get('user_feedback', []),
-        'notes': data.get('notes', ''),
-        'created_at': datetime.now().isoformat(),
-        'updated_at': datetime.now().isoformat()
-    }
-    
-    integrations_data.append(integration)
-    return jsonify(integration), 201
+
+    try:
+        integration = Integration(
+            name=data.get('name'),
+            platform=data.get('platform'),
+            integration_type=data.get('integration_type'),
+            purpose=data.get('purpose', ''),
+            data_sync_direction=data.get('data_sync_direction'),
+            sync_frequency=data.get('sync_frequency'),
+            api_endpoint=data.get('api_endpoint'),
+            authentication_method=data.get('authentication_method', ''),
+            credentials_stored=data.get('credentials_stored', False),
+            setup_status=data.get('setup_status', 'Not Configured'),
+            sync_status=data.get('sync_status'),
+            error_log=data.get('error_log'),
+            data_mapping=data.get('data_mapping'),
+            filters_applied=data.get('filters_applied'),
+            security_considerations=data.get('security_considerations'),
+            compliance_notes=data.get('compliance_notes'),
+            performance_metrics=data.get('performance_metrics'),
+            usage_statistics=data.get('usage_statistics'),
+            configuration_notes=data.get('configuration_notes'),
+            troubleshooting_guide=data.get('troubleshooting_guide')
+        )
+
+        db.session.add(integration)
+        db.session.commit()
+
+        return jsonify(integration.to_dict()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
 
 @integrations_bp.route('/api/integrations/<int:integration_id>', methods=['PUT'])
 def update_integration(integration_id):

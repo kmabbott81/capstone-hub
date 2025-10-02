@@ -1,102 +1,115 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from src.models.research_item import ResearchItem
+from src.models.database import db
 
 research_items_bp = Blueprint('research_items', __name__)
-
-# In-memory storage for demonstration (replace with database in production)
-research_data = []
 
 @research_items_bp.route('/api/research-items', methods=['GET'])
 def get_research_items():
     """Get all research items"""
-    return jsonify(research_data)
+    items = ResearchItem.query.all()
+    return jsonify([{
+        'id': item.id,
+        'title': item.title,
+        'description': item.description,
+        'research_type': item.research_type,
+        'research_method': item.research_method,
+        'completion_status': item.completion_status,
+        'quality_score': item.quality_score,
+        'relevance_score': item.relevance_score,
+        'credibility_score': item.credibility_score,
+        'priority': item.priority,
+        'created_at': item.created_at.isoformat(),
+        'updated_at': item.updated_at.isoformat()
+    } for item in items])
 
 @research_items_bp.route('/api/research-items', methods=['POST'])
 def create_research_item():
     """Create a new research item"""
     data = request.get_json()
-    
-    research_item = {
-        'id': len(research_data) + 1,
-        'title': data.get('title'),
-        'description': data.get('description', ''),
-        'research_type': data.get('research_type'),  # Primary, Secondary
-        'research_method': data.get('research_method', ''),
-        'data_source': data.get('data_source', ''),
-        'participants': data.get('participants', []),
-        'questions': data.get('questions', []),
-        'findings': data.get('findings', ''),
-        'insights': data.get('insights', []),
-        'recommendations': data.get('recommendations', []),
-        'status': data.get('status', 'Planned'),
-        'priority': data.get('priority', 'Medium'),
-        'start_date': data.get('start_date'),
-        'completion_date': data.get('completion_date'),
-        'estimated_hours': data.get('estimated_hours', 0),
-        'actual_hours': data.get('actual_hours', 0),
-        'budget': data.get('budget', 0),
-        'tags': data.get('tags', []),
-        'related_processes': data.get('related_processes', []),
-        'related_technologies': data.get('related_technologies', []),
-        'documents': data.get('documents', []),
-        'links': data.get('links', []),
-        'quality_score': data.get('quality_score', 0),
-        'reliability_score': data.get('reliability_score', 0),
-        'relevance_score': data.get('relevance_score', 0),
-        'notes': data.get('notes', ''),
-        'created_at': datetime.now().isoformat(),
-        'updated_at': datetime.now().isoformat()
-    }
-    
-    research_data.append(research_item)
-    return jsonify(research_item), 201
+
+    try:
+        research_item = ResearchItem(
+            title=data.get('title'),
+            description=data.get('description', ''),
+            research_type=data.get('research_type'),
+            research_method=data.get('research_method', ''),
+            completion_status=data.get('status', 'Not Started'),
+            priority=data.get('priority', 'Medium')
+        )
+
+        db.session.add(research_item)
+        db.session.commit()
+
+        return jsonify({
+            'id': research_item.id,
+            'title': research_item.title,
+            'description': research_item.description,
+            'research_type': research_item.research_type,
+            'research_method': research_item.research_method,
+            'completion_status': research_item.completion_status,
+            'quality_score': research_item.quality_score,
+            'relevance_score': research_item.relevance_score,
+            'credibility_score': research_item.credibility_score,
+            'priority': research_item.priority,
+            'created_at': research_item.created_at.isoformat(),
+            'updated_at': research_item.updated_at.isoformat()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @research_items_bp.route('/api/research-items/<int:item_id>', methods=['PUT'])
 def update_research_item(item_id):
     """Update an existing research item"""
     data = request.get_json()
-    
-    for item in research_data:
-        if item['id'] == item_id:
-            item.update({
-                'title': data.get('title', item['title']),
-                'description': data.get('description', item['description']),
-                'research_type': data.get('research_type', item['research_type']),
-                'research_method': data.get('research_method', item['research_method']),
-                'data_source': data.get('data_source', item['data_source']),
-                'participants': data.get('participants', item['participants']),
-                'questions': data.get('questions', item['questions']),
-                'findings': data.get('findings', item['findings']),
-                'insights': data.get('insights', item['insights']),
-                'recommendations': data.get('recommendations', item['recommendations']),
-                'status': data.get('status', item['status']),
-                'priority': data.get('priority', item['priority']),
-                'start_date': data.get('start_date', item['start_date']),
-                'completion_date': data.get('completion_date', item['completion_date']),
-                'estimated_hours': data.get('estimated_hours', item['estimated_hours']),
-                'actual_hours': data.get('actual_hours', item['actual_hours']),
-                'budget': data.get('budget', item['budget']),
-                'tags': data.get('tags', item['tags']),
-                'related_processes': data.get('related_processes', item['related_processes']),
-                'related_technologies': data.get('related_technologies', item['related_technologies']),
-                'documents': data.get('documents', item['documents']),
-                'links': data.get('links', item['links']),
-                'quality_score': data.get('quality_score', item['quality_score']),
-                'reliability_score': data.get('reliability_score', item['reliability_score']),
-                'relevance_score': data.get('relevance_score', item['relevance_score']),
-                'notes': data.get('notes', item['notes']),
-                'updated_at': datetime.now().isoformat()
-            })
-            return jsonify(item)
-    
-    return jsonify({'error': 'Research item not found'}), 404
+    item = ResearchItem.query.get(item_id)
+
+    if not item:
+        return jsonify({'error': 'Research item not found'}), 404
+
+    try:
+        item.title = data.get('title', item.title)
+        item.description = data.get('description', item.description)
+        item.research_type = data.get('research_type', item.research_type)
+        item.research_method = data.get('research_method', item.research_method)
+        item.completion_status = data.get('status', item.completion_status)
+        item.priority = data.get('priority', item.priority)
+        item.updated_at = datetime.utcnow()
+
+        db.session.commit()
+
+        return jsonify({
+            'id': item.id,
+            'title': item.title,
+            'description': item.description,
+            'research_type': item.research_type,
+            'research_method': item.research_method,
+            'completion_status': item.completion_status,
+            'priority': item.priority,
+            'created_at': item.created_at.isoformat(),
+            'updated_at': item.updated_at.isoformat()
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @research_items_bp.route('/api/research-items/<int:item_id>', methods=['DELETE'])
 def delete_research_item(item_id):
     """Delete a research item"""
-    global research_data
-    research_data = [r for r in research_data if r['id'] != item_id]
-    return jsonify({'message': 'Research item deleted successfully'})
+    item = ResearchItem.query.get(item_id)
+
+    if not item:
+        return jsonify({'error': 'Research item not found'}), 404
+
+    try:
+        db.session.delete(item)
+        db.session.commit()
+        return jsonify({'message': 'Research item deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @research_items_bp.route('/api/research-items/methods', methods=['GET'])
 def get_research_methods():

@@ -1,42 +1,58 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from src.models.business_process import BusinessProcess
+from src.models.database import db
 
 business_processes_bp = Blueprint('business_processes', __name__)
-
-# In-memory storage for demonstration (replace with database in production)
-processes_data = []
 
 @business_processes_bp.route('/api/business-processes', methods=['GET'])
 def get_business_processes():
     """Get all business processes"""
-    return jsonify(processes_data)
+    processes = BusinessProcess.query.all()
+    return jsonify([{
+        'id': p.id,
+        'name': p.name,
+        'description': p.description,
+        'department': p.department,
+        'automation_potential': p.automation_potential,
+        'ai_opportunity': p.ai_opportunity,
+        'evaluation_status': p.evaluation_status,
+        'created_at': p.created_at.isoformat(),
+        'updated_at': p.updated_at.isoformat()
+    } for p in processes])
 
 @business_processes_bp.route('/api/business-processes', methods=['POST'])
 def create_business_process():
     """Create a new business process"""
     data = request.get_json()
-    
-    process = {
-        'id': len(processes_data) + 1,
-        'name': data.get('name'),
-        'description': data.get('description', ''),
-        'department': data.get('department'),
-        'current_state': data.get('current_state', 'Manual'),
-        'automation_potential': data.get('automation_potential', 'Medium'),
-        'priority': data.get('priority', 'Medium'),
-        'estimated_time_savings': data.get('estimated_time_savings', 0),
-        'estimated_cost_savings': data.get('estimated_cost_savings', 0),
-        'complexity': data.get('complexity', 'Medium'),
-        'stakeholders': data.get('stakeholders', []),
-        'pain_points': data.get('pain_points', []),
-        'success_metrics': data.get('success_metrics', []),
-        'status': data.get('status', 'Identified'),
-        'created_at': datetime.now().isoformat(),
-        'updated_at': datetime.now().isoformat()
-    }
-    
-    processes_data.append(process)
-    return jsonify(process), 201
+
+    try:
+        process = BusinessProcess(
+            name=data.get('name'),
+            description=data.get('description', ''),
+            department=data.get('department'),
+            automation_potential=data.get('automation_potential', 'Medium'),
+            ai_opportunity=data.get('ai_opportunity', 'Medium'),
+            evaluation_status=data.get('status', 'Not Started')
+        )
+
+        db.session.add(process)
+        db.session.commit()
+
+        return jsonify({
+            'id': process.id,
+            'name': process.name,
+            'description': process.description,
+            'department': process.department,
+            'automation_potential': process.automation_potential,
+            'ai_opportunity': process.ai_opportunity,
+            'evaluation_status': process.evaluation_status,
+            'created_at': process.created_at.isoformat(),
+            'updated_at': process.updated_at.isoformat()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @business_processes_bp.route('/api/business-processes/<int:process_id>', methods=['PUT'])
 def update_business_process(process_id):
