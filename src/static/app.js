@@ -974,14 +974,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="form-group mb-3">
                     <label for="process-automation">Automation Potential</label>
                     <select id="process-automation" name="automation_potential" class="form-control">
-                        ${options.automationLevels.map(level => `<option value="${level}">${level}</option>`).join('')}
+                        ${(options.automationPotential || ['High', 'Medium', 'Low']).map(level => `<option value="${level}">${level}</option>`).join('')}
                     </select>
                 </div>
 
                 <div class="form-group mb-3">
                     <label for="process-ai-opportunity">AI Opportunity</label>
                     <select id="process-ai-opportunity" name="ai_opportunity" class="form-control">
-                        ${options.automationLevels.map(level => `<option value="${level}">${level}</option>`).join('')}
+                        ${(options.automationPotential || ['High', 'Medium', 'Low']).map(level => `<option value="${level}">${level}</option>`).join('')}
                     </select>
                 </div>
 
