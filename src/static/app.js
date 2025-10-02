@@ -98,26 +98,40 @@ class CapstoneHub {
 
     async loadDeliverables() {
         try {
+            console.log('[DEBUG] Fetching deliverables from /api/deliverables');
             const response = await fetch('/api/deliverables');
+            console.log('[DEBUG] Deliverables response status:', response.status, response.statusText);
             if (response.ok) {
                 this.data.deliverables = await response.json();
+                console.log('[DEBUG] Loaded deliverables:', this.data.deliverables.length, 'items');
                 this.renderDeliverables();
+            } else {
+                const errorText = await response.text();
+                console.error('[ERROR] Failed to load deliverables:', response.status, errorText);
+                this.showEmptyState('deliverables-timeline', 'deliverables', 'Failed to load deliverables', 'Check console for errors');
             }
         } catch (error) {
-            console.error('Error loading deliverables:', error);
+            console.error('[ERROR] Error loading deliverables:', error);
             this.showEmptyState('deliverables-timeline', 'deliverables', 'No deliverables yet', 'Add your first deliverable to get started');
         }
     }
 
     async loadProcesses() {
         try {
+            console.log('[DEBUG] Fetching business processes from /api/business-processes');
             const response = await fetch('/api/business-processes');
+            console.log('[DEBUG] Business processes response status:', response.status, response.statusText);
             if (response.ok) {
                 this.data.processes = await response.json();
+                console.log('[DEBUG] Loaded business processes:', this.data.processes.length, 'items');
                 this.renderProcesses();
+            } else {
+                const errorText = await response.text();
+                console.error('[ERROR] Failed to load business processes:', response.status, errorText);
+                this.showEmptyState('processes-grid', 'sitemap', 'Failed to load processes', 'Check console for errors');
             }
         } catch (error) {
-            console.error('Error loading processes:', error);
+            console.error('[ERROR] Error loading processes:', error);
             this.showEmptyState('processes-grid', 'sitemap', 'No business processes yet', 'Add your first process to begin evaluation');
         }
     }
@@ -152,13 +166,20 @@ class CapstoneHub {
 
     async loadResearchItems() {
         try {
+            console.log('[DEBUG] Fetching research items from /api/research-items');
             const response = await fetch('/api/research-items');
+            console.log('[DEBUG] Research items response status:', response.status, response.statusText);
             if (response.ok) {
                 this.data.researchItems = await response.json();
+                console.log('[DEBUG] Loaded research items:', this.data.researchItems.length, 'items');
                 this.renderResearchItems();
+            } else {
+                const errorText = await response.text();
+                console.error('[ERROR] Failed to load research items:', response.status, errorText);
+                this.showEmptyState('research-content', 'search', 'Failed to load research items', 'Check console for errors');
             }
         } catch (error) {
-            console.error('Error loading research items:', error);
+            console.error('[ERROR] Error loading research items:', error);
             this.showEmptyState('research-content', 'search', 'No research items yet', 'Add your first research item to begin documentation');
         }
     }
