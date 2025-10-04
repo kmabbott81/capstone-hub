@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 from datetime import datetime, timedelta
 import hashlib
 import os
+from src.extensions import csrf, limiter
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -10,6 +11,8 @@ ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'HLStearns2025!')  # Default for lo
 VIEWER_PASSWORD = "CapstoneView"
 
 @auth_bp.route('/api/auth/login', methods=['POST'])
+@limiter.limit("5 per 15 minutes")
+@csrf.exempt
 def login():
     """Authenticate user with admin or viewer password"""
     try:

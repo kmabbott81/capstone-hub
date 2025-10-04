@@ -12,7 +12,11 @@
       "Read(//c/agentic-ai-project/**)",
       "Bash(del srcdatabaseapp.db)",
       "Bash(do sed -i \"s/from flask_sqlalchemy import SQLAlchemy/from src.models.database import db/\" \"$file\")",
-      "Bash(do sed -i \"s/from src\\.models\\.[a-z_]* import.*db$/from src.models.database import db/\" \"$file\")"
+      "Bash(do sed -i \"s/from src\\.models\\.[a-z_]* import.*db$/from src.models.database import db/\" \"$file\")",
+      "Bash(gh api:*)",
+      "Bash(railway status:*)",
+      "Bash(sqlite3:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []

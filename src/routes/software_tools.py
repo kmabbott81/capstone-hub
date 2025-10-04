@@ -3,6 +3,7 @@ from datetime import datetime
 from src.models.software_tool import SoftwareTool
 from src.models.database import db
 from src.routes.auth import require_admin
+from src.extensions import csrf
 
 software_tools_bp = Blueprint('software_tools', __name__)
 
@@ -24,6 +25,7 @@ def get_software_tools():
 
 @software_tools_bp.route('/api/software-tools', methods=['POST'])
 @require_admin
+@csrf.protect
 def create_software_tool():
     """Create a new software tool"""
     data = request.get_json()
@@ -82,6 +84,7 @@ def create_software_tool():
 
 @software_tools_bp.route('/api/software-tools/<int:tool_id>', methods=['PUT'])
 @require_admin
+@csrf.protect
 def update_software_tool(tool_id):
     """Update an existing software tool"""
     data = request.get_json()
@@ -140,6 +143,7 @@ def update_software_tool(tool_id):
 
 @software_tools_bp.route('/api/software-tools/<int:tool_id>', methods=['DELETE'])
 @require_admin
+@csrf.protect
 def delete_software_tool(tool_id):
     """Delete a software tool"""
     tool = SoftwareTool.query.get(tool_id)

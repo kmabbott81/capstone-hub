@@ -100,14 +100,18 @@ class AuthManager {
             <div class="admin-badge">
                 <span class="admin-icon">👑</span>
                 <span class="admin-text">Admin</span>
+                <button class="backup-btn" data-action="backup-database" title="Backup Database">💾</button>
                 <button class="logout-btn" data-action="logout">Logout</button>
             </div>
         `;
         document.body.appendChild(indicator);
 
-        // Add event listener (CSP-compliant)
+        // Add event listeners (CSP-compliant)
         const logoutBtn = indicator.querySelector('[data-action="logout"]');
         logoutBtn.addEventListener('click', () => this.logout());
+
+        const backupBtn = indicator.querySelector('[data-action="backup-database"]');
+        backupBtn.addEventListener('click', () => this.triggerBackup());
     }
     
     removeAdminStatusIndicator() {
@@ -115,6 +119,32 @@ class AuthManager {
         if (indicator) indicator.remove();
     }
     
+    async triggerBackup() {
+        if (!confirm('Create a backup of the database now?')) return;
+
+        try {
+            const token = await getCSRFToken();
+            const response = await fetch('/api/admin/backup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': token
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('✅ ' + data.message);
+            } else {
+                alert('❌ ' + data.message);
+            }
+        } catch (error) {
+            console.error('Backup error:', error);
+            alert('❌ Backup failed. Check console for details.');
+        }
+    }
+
     logout() {
         this.setUserRole('viewer');
         alert('✅ Logged out successfully');

@@ -1,33 +1,5 @@
 // Enhanced Capstone Hub - JavaScript Application Logic
 
-// XSS Safety Helper - Escape user-generated content
-const escapeHTML = (str) => {
-    if (str == null) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-};
-
-// CSRF token helper
-let csrfToken = null;
-
-async function getCSRFToken() {
-    if (csrfToken) return csrfToken;
-
-    try {
-        const response = await fetch('/api/csrf-token');
-        const data = await response.json();
-        csrfToken = data.csrf_token;
-        return csrfToken;
-    } catch (error) {
-        console.error('Failed to get CSRF token:', error);
-        return null;
-    }
-}
-
 class CapstoneHub {
     constructor() {
         this.currentSection = 'dashboard';
@@ -302,29 +274,8 @@ class CapstoneHub {
             this.showEmptyState('deliverables-timeline', 'tasks', 'No deliverables yet', 'Add your first deliverable to get started with timeline tracking');
             return;
         }
-        container.innerHTML = this.data.deliverables.map(item => {
-            const title = escapeHTML(item.title || 'Untitled');
-            const desc = escapeHTML(item.description || '');
-            const dueDate = escapeHTML(item.due_date || 'No date');
-            const phase = escapeHTML(item.phase || 'Unassigned');
-            const status = escapeHTML(item.status || 'Not started');
-
-            let card = '<div class="deliverable-card">';
-            card += '<div class="deliverable-header">';
-            card += '<h3>' + title + '</h3>';
-            card += '<span class="status-badge status-' + status.toLowerCase().replace(/\s+/g, '-') + '">' + status + '</span>';
-            card += '</div>';
-            card += '<div class="deliverable-body">';
-            card += '<div class="field"><strong>Phase:</strong> ' + phase + '</div>';
-            card += '<div class="field"><strong>Due Date:</strong> ' + dueDate + '</div>';
-            if (desc) card += '<div class="field"><strong>Description:</strong> ' + desc + '</div>';
-            card += '</div>';
-            card += '<div class="deliverable-footer admin-only">';
-            card += '<button class="btn-secondary btn-sm" data-action="edit-deliverable" data-id="' + item.id + '"><i class="fas fa-edit"></i> Edit</button>';
-            card += '<button class="btn-danger btn-sm" data-action="delete-deliverable" data-id="' + item.id + '"><i class="fas fa-trash"></i> Delete</button>';
-            card += '</div></div>';
-            return card;
-        }).join('');
+        // Render deliverables timeline here
+        container.innerHTML = '<div class="loading">Loading deliverables...</div>';
     }
 
     renderProcesses() {
@@ -333,37 +284,8 @@ class CapstoneHub {
             this.showEmptyState('processes-grid', 'sitemap', 'No business processes yet', 'Add your first process to begin evaluation and optimization');
             return;
         }
-        
-        container.innerHTML = this.data.processes.map(process => {
-            const name = escapeHTML(process.name || 'Untitled Process');
-            const dept = escapeHTML(process.department || 'Not specified');
-            const automation = escapeHTML(process.automation_potential || 'Not Set');
-            const desc = escapeHTML(process.description || 'No description provided');
-            const currentState = escapeHTML(process.current_state || 'Not documented');
-            const painPoints = escapeHTML(process.pain_points || '');
-            const aiRec = escapeHTML(process.ai_recommendations || '');
-            const priority = escapeHTML(process.priority_score || '');
-            
-            let card = '<div class="process-card">';
-            card += '<div class="process-header">';
-            card += '<h3>' + name + '</h3>';
-            card += '<span class="process-badge">' + automation + '</span>';
-            card += '</div>';
-            card += '<div class="process-body">';
-            card += '<div class="process-field"><strong>Department:</strong> ' + dept + '</div>';
-            card += '<div class="process-field"><strong>Description:</strong> ' + desc + '</div>';
-            card += '<div class="process-field"><strong>Current State:</strong> ' + currentState + '</div>';
-            if (painPoints) card += '<div class="process-field"><strong>Pain Points:</strong> ' + painPoints + '</div>';
-            if (aiRec) card += '<div class="process-field"><strong>AI Recommendations:</strong> ' + aiRec + '</div>';
-            if (priority) card += '<div class="process-field"><strong>Priority Score:</strong> ' + priority + '/10</div>';
-            card += '</div>';
-            card += '<div class="process-footer admin-only">';
-            card += '<button class="btn-secondary btn-sm" data-action="edit-process" data-id="' + process.id + '"><i class="fas fa-edit"></i> Edit</button>';
-            card += '<button class="btn-danger btn-sm" data-action="delete-process" data-id="' + process.id + '"><i class="fas fa-trash"></i> Delete</button>';
-            card += '</div>';
-            card += '</div>';
-            return card;
-        }).join('');
+        // Render processes grid here
+        container.innerHTML = '<div class="loading">Loading processes...</div>';
     }
 
     renderAITechnologies() {
@@ -372,29 +294,8 @@ class CapstoneHub {
             this.showEmptyState('ai-tech-grid', 'robot', 'No AI technologies yet', 'Add your first AI technology to start building your comprehensive catalog');
             return;
         }
-        container.innerHTML = this.data.aiTechnologies.map(tech => {
-            const name = escapeHTML(tech.name || 'Untitled');
-            const category = escapeHTML(tech.category || 'Uncategorized');
-            const desc = escapeHTML(tech.description || 'No description');
-            const useCase = escapeHTML(tech.use_case || '');
-            const maturity = escapeHTML(tech.maturity_level || 'Unknown');
-
-            let card = '<div class="tech-card">';
-            card += '<div class="tech-header">';
-            card += '<h3>' + name + '</h3>';
-            card += '<span class="tech-badge">' + category + '</span>';
-            card += '</div>';
-            card += '<div class="tech-body">';
-            card += '<div class="field"><strong>Maturity:</strong> ' + maturity + '</div>';
-            card += '<div class="field"><strong>Description:</strong> ' + desc + '</div>';
-            if (useCase) card += '<div class="field"><strong>Use Case:</strong> ' + useCase + '</div>';
-            card += '</div>';
-            card += '<div class="tech-footer admin-only">';
-            card += '<button class="btn-secondary btn-sm" data-action="edit-ai-technology" data-id="' + tech.id + '"><i class="fas fa-edit"></i> Edit</button>';
-            card += '<button class="btn-danger btn-sm" data-action="delete-ai-technology" data-id="' + tech.id + '"><i class="fas fa-trash"></i> Delete</button>';
-            card += '</div></div>';
-            return card;
-        }).join('');
+        // Render AI technologies grid here
+        container.innerHTML = '<div class="loading">Loading AI technologies...</div>';
     }
 
     renderSoftwareTools() {
@@ -425,32 +326,8 @@ class CapstoneHub {
             this.showEmptyState('research-content', 'search', 'No research items yet', 'Add your first research item to begin comprehensive documentation and tracking');
             return;
         }
-
-        container.innerHTML = this.data.researchItems.map(item => {
-            const title = escapeHTML(item.title || 'Untitled');
-            const type = escapeHTML(item.research_type || 'General');
-            const method = escapeHTML(item.research_method || 'Not specified');
-            const desc = escapeHTML(item.description || 'No description');
-            const source = escapeHTML(item.source || '');
-            const findings = escapeHTML(item.key_findings || '');
-
-            let card = '<div class="research-card">';
-            card += '<div class="research-header">';
-            card += '<h3>' + title + '</h3>';
-            card += '<span class="research-badge">' + type + '</span>';
-            card += '</div>';
-            card += '<div class="research-body">';
-            card += '<div class="field"><strong>Method:</strong> ' + method + '</div>';
-            card += '<div class="field"><strong>Description:</strong> ' + desc + '</div>';
-            if (source) card += '<div class="field"><strong>Source:</strong> ' + source + '</div>';
-            if (findings) card += '<div class="field"><strong>Key Findings:</strong> ' + findings + '</div>';
-            card += '</div>';
-            card += '<div class="research-footer admin-only">';
-            card += '<button class="btn-secondary btn-sm" data-action="edit-research-item" data-id="' + item.id + '"><i class="fas fa-edit"></i> Edit</button>';
-            card += '<button class="btn-danger btn-sm" data-action="delete-research-item" data-id="' + item.id + '"><i class="fas fa-trash"></i> Delete</button>';
-            card += '</div></div>';
-            return card;
-        }).join('');
+        // Render research items here
+        container.innerHTML = '<div class="loading">Loading research items...</div>';
     }
 
     renderIntegrations() {
@@ -459,29 +336,8 @@ class CapstoneHub {
             this.showEmptyState('integration-logs', 'plug', 'No integration activity yet', 'Configure your first integration to see activity logs');
             return;
         }
-        container.innerHTML = this.data.integrations.map(item => {
-            const name = escapeHTML(item.name || 'Untitled Integration');
-            const type = escapeHTML(item.integration_type || 'Unknown');
-            const status = escapeHTML(item.status || 'Inactive');
-            const desc = escapeHTML(item.description || 'No description');
-            const endpoint = escapeHTML(item.api_endpoint || '');
-
-            let card = '<div class="integration-card">';
-            card += '<div class="integration-header">';
-            card += '<h3>' + name + '</h3>';
-            card += '<span class="status-badge status-' + status.toLowerCase() + '">' + status + '</span>';
-            card += '</div>';
-            card += '<div class="integration-body">';
-            card += '<div class="field"><strong>Type:</strong> ' + type + '</div>';
-            card += '<div class="field"><strong>Description:</strong> ' + desc + '</div>';
-            if (endpoint) card += '<div class="field"><strong>Endpoint:</strong> ' + endpoint + '</div>';
-            card += '</div>';
-            card += '<div class="integration-footer admin-only">';
-            card += '<button class="btn-secondary btn-sm" data-action="edit-integration" data-id="' + item.id + '"><i class="fas fa-edit"></i> Edit</button>';
-            card += '<button class="btn-danger btn-sm" data-action="delete-integration" data-id="' + item.id + '"><i class="fas fa-trash"></i> Delete</button>';
-            card += '</div></div>';
-            return card;
-        }).join('');
+        // Render integration logs here
+        container.innerHTML = '<div class="loading">Loading integration logs...</div>';
     }
 
     // Filtering Methods
@@ -568,7 +424,7 @@ class CapstoneHub {
                     <input type="date" id="deliverable-due-date" class="form-control">
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
+                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
                     <button type="submit" class="btn-primary">Add Deliverable</button>
                 </div>
             </form>
@@ -594,12 +450,10 @@ class CapstoneHub {
         const dueDate = document.getElementById('deliverable-due-date').value;
 
         try {
-            const token = await getCSRFToken();
             const response = await fetch('/api/deliverables', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': token
                 },
                 body: JSON.stringify({
                     title: title,
@@ -657,7 +511,7 @@ class CapstoneHub {
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
+                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
                     <button type="submit" class="btn-primary">Add Process</button>
                 </div>
             </form>
@@ -683,12 +537,10 @@ class CapstoneHub {
         const automationPotential = document.getElementById('process-automation').value;
 
         try {
-            const token = await getCSRFToken();
             const response = await fetch('/api/business-processes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': token
                 },
                 body: JSON.stringify({
                     name: name,
@@ -711,305 +563,6 @@ class CapstoneHub {
         } catch (error) {
             console.error('Error saving business process:', error);
             showNotification('Error adding business process', 'error');
-        }
-    }
-
-    async deleteProcess(id) {
-        if (!confirm('Are you sure you want to delete this business process?')) {
-            return;
-        }
-
-        try {
-            const token = await getCSRFToken();
-            const response = await fetch(`/api/business-processes/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': token
-                }
-            });
-
-            if (response.ok) {
-                this.data.processes = this.data.processes.filter(p => p.id !== id);
-                this.loadProcesses();
-                this.updateDashboard();
-                showNotification('Business process deleted successfully!', 'success');
-            } else {
-                const error = await response.json();
-                showNotification(error.error || 'Error deleting business process', 'error');
-            }
-        } catch (error) {
-            console.error('Error deleting business process:', error);
-            showNotification('Error deleting business process', 'error');
-        }
-    }
-
-    editProcess(id) {
-        // Find the process
-        const process = this.data.processes.find(p => p.id === id);
-        if (!process) {
-            showNotification('Business process not found', 'error');
-            return;
-        }
-
-        const options = getDropdownOptions();
-
-        const form = `
-            <form id="process-form">
-                <div class="form-group mb-3">
-                    <label for="process-name">Process Name</label>
-                    <input type="text" id="process-name" class="form-control" value="${escapeHTML(process.name)}" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="process-department">Department</label>
-                    <select id="process-department" class="form-control" required>
-                        <option value="">Select Department</option>
-                        ${options.departments.map(dept =>
-                            `<option value="${escapeHTML(dept)}" ${process.department === dept ? 'selected' : ''}>${escapeHTML(dept)}</option>`
-                        ).join('')}
-                    </select>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="process-description">Description</label>
-                    <textarea id="process-description" class="form-control" rows="3" required>${escapeHTML(process.description || '')}</textarea>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="process-automation">Automation Potential</label>
-                    <select id="process-automation" class="form-control" required>
-                        <option value="">Select Automation Potential</option>
-                        ${options.automationLevels.map(level =>
-                            `<option value="${escapeHTML(level)}" ${process.automation_potential === level ? 'selected' : ''}>${escapeHTML(level)}</option>`
-                        ).join('')}
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
-                    <button type="submit" class="btn-primary">Update Process</button>
-                </div>
-            </form>
-        `;
-        this.showModal('Edit Business Process', form);
-
-        // Add form submit handler
-        setTimeout(() => {
-            const formElement = document.getElementById('process-form');
-            if (formElement) {
-                formElement.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    await this.updateProcess(id);
-                });
-            }
-        }, 100);
-    }
-
-    async updateProcess(id) {
-        const name = document.getElementById('process-name').value;
-        const department = document.getElementById('process-department').value;
-        const description = document.getElementById('process-description').value;
-        const automationPotential = document.getElementById('process-automation').value;
-
-        try {
-            const token = await getCSRFToken();
-            const response = await fetch(`/api/business-processes/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': token
-                },
-                body: JSON.stringify({
-                    name: name,
-                    department: department,
-                    description: description,
-                    automation_potential: automationPotential
-                })
-            });
-
-            if (response.ok) {
-                this.closeModal();
-                this.loadProcesses();
-                this.updateDashboard();
-                showNotification('Business process updated successfully!', 'success');
-            } else {
-                showNotification('Error updating business process', 'error');
-            }
-        } catch (error) {
-            console.error('Error updating business process:', error);
-            showNotification('Error updating business process', 'error');
-        }
-    }
-
-    // Deliverable CRUD operations
-    editDeliverable(id) {
-        showNotification('Edit deliverable functionality coming soon', 'info');
-    }
-
-    async deleteDeliverable(id) {
-        if (!confirm('Are you sure you want to delete this deliverable?')) {
-            return;
-        }
-
-        try {
-            const token = await getCSRFToken();
-            const response = await fetch(`/api/deliverables/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': token
-                }
-            });
-
-            if (response.ok) {
-                this.data.deliverables = this.data.deliverables.filter(d => d.id !== id);
-                this.loadDeliverables();
-                this.updateDashboard();
-                showNotification('Deliverable deleted successfully!', 'success');
-            } else {
-                const error = await response.json();
-                showNotification(error.error || 'Error deleting deliverable', 'error');
-            }
-        } catch (error) {
-            console.error('Error deleting deliverable:', error);
-            showNotification('Error deleting deliverable', 'error');
-        }
-    }
-
-    // AI Technology CRUD operations
-    editAITechnology(id) {
-        showNotification('Edit AI technology functionality coming soon', 'info');
-    }
-
-    async deleteAITechnology(id) {
-        if (!confirm('Are you sure you want to delete this AI technology?')) {
-            return;
-        }
-
-        try {
-            const token = await getCSRFToken();
-            const response = await fetch(`/api/ai-technologies/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': token
-                }
-            });
-
-            if (response.ok) {
-                this.data.aiTechnologies = this.data.aiTechnologies.filter(t => t.id !== id);
-                this.loadAITechnologies();
-                this.updateDashboard();
-                showNotification('AI technology deleted successfully!', 'success');
-            } else {
-                const error = await response.json();
-                showNotification(error.error || 'Error deleting AI technology', 'error');
-            }
-        } catch (error) {
-            console.error('Error deleting AI technology:', error);
-            showNotification('Error deleting AI technology', 'error');
-        }
-    }
-
-    // Software Tool CRUD operations
-    editSoftwareTool(id) {
-        showNotification('Edit software tool functionality coming soon', 'info');
-    }
-
-    async deleteSoftwareTool(id) {
-        if (!confirm('Are you sure you want to delete this software tool?')) {
-            return;
-        }
-
-        try {
-            const token = await getCSRFToken();
-            const response = await fetch(`/api/software-tools/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': token
-                }
-            });
-
-            if (response.ok) {
-                this.data.softwareTools = this.data.softwareTools.filter(t => t.id !== id);
-                this.loadSoftwareTools();
-                this.updateDashboard();
-                showNotification('Software tool deleted successfully!', 'success');
-            } else {
-                const error = await response.json();
-                showNotification(error.error || 'Error deleting software tool', 'error');
-            }
-        } catch (error) {
-            console.error('Error deleting software tool:', error);
-            showNotification('Error deleting software tool', 'error');
-        }
-    }
-
-    // Research Item CRUD operations
-    editResearchItem(id) {
-        showNotification('Edit research item functionality coming soon', 'info');
-    }
-
-    async deleteResearchItem(id) {
-        if (!confirm('Are you sure you want to delete this research item?')) {
-            return;
-        }
-
-        try {
-            const token = await getCSRFToken();
-            const response = await fetch(`/api/research-items/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': token
-                }
-            });
-
-            if (response.ok) {
-                this.data.researchItems = this.data.researchItems.filter(r => r.id !== id);
-                this.loadResearchItems();
-                this.updateDashboard();
-                showNotification('Research item deleted successfully!', 'success');
-            } else {
-                const error = await response.json();
-                showNotification(error.error || 'Error deleting research item', 'error');
-            }
-        } catch (error) {
-            console.error('Error deleting research item:', error);
-            showNotification('Error deleting research item', 'error');
-        }
-    }
-
-    // Integration CRUD operations
-    editIntegration(id) {
-        showNotification('Edit integration functionality coming soon', 'info');
-    }
-
-    async deleteIntegration(id) {
-        if (!confirm('Are you sure you want to delete this integration?')) {
-            return;
-        }
-
-        try {
-            const token = await getCSRFToken();
-            const response = await fetch(`/api/integrations/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': token
-                }
-            });
-
-            if (response.ok) {
-                this.data.integrations = this.data.integrations.filter(i => i.id !== id);
-                this.loadIntegrations();
-                this.updateDashboard();
-                showNotification('Integration deleted successfully!', 'success');
-            } else {
-                const error = await response.json();
-                showNotification(error.error || 'Error deleting integration', 'error');
-            }
-        } catch (error) {
-            console.error('Error deleting integration:', error);
-            showNotification('Error deleting integration', 'error');
         }
     }
 
@@ -1041,7 +594,7 @@ class CapstoneHub {
                     <textarea id="ai-tech-description" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
+                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
                     <button type="submit" class="btn-primary">Add AI Technology</button>
                 </div>
             </form>
@@ -1067,12 +620,10 @@ class CapstoneHub {
         const description = document.getElementById('ai-tech-description').value;
 
         try {
-            const token = await getCSRFToken();
             const response = await fetch('/api/ai-technologies', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': token
                 },
                 body: JSON.stringify({
                     name: name,
@@ -1131,7 +682,7 @@ class CapstoneHub {
                     <textarea id="tool-description" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
+                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
                     <button type="submit" class="btn-primary">Add Software Tool</button>
                 </div>
             </form>
@@ -1157,12 +708,10 @@ class CapstoneHub {
         const description = document.getElementById('tool-description').value;
 
         try {
-            const token = await getCSRFToken();
             const response = await fetch('/api/software-tools', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': token
                 },
                 body: JSON.stringify({
                     name: name,
@@ -1219,7 +768,7 @@ class CapstoneHub {
                     <textarea id="research-description" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
+                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
                     <button type="submit" class="btn-primary">Add Research Item</button>
                 </div>
             </form>
@@ -1245,12 +794,10 @@ class CapstoneHub {
         const description = document.getElementById('research-description').value;
 
         try {
-            const token = await getCSRFToken();
             const response = await fetch('/api/research-items', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': token
                 },
                 body: JSON.stringify({
                     title: title,
@@ -1309,7 +856,7 @@ class CapstoneHub {
                     <textarea id="integration-purpose" class="form-control" rows="3" placeholder="What will this integration accomplish?"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
+                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
                     <button type="submit" class="btn-primary">Add Integration</button>
                 </div>
             </form>
@@ -1335,12 +882,10 @@ class CapstoneHub {
         const purpose = document.getElementById('integration-purpose').value;
 
         try {
-            const token = await getCSRFToken();
             const response = await fetch('/api/integrations', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': token
                 },
                 body: JSON.stringify({
                     name: name,
@@ -1408,45 +953,6 @@ let capstoneHub;
 document.addEventListener('DOMContentLoaded', () => {
     capstoneHub = new CapstoneHub();
 
-    // Event delegation for all action buttons (removes need for inline onclick)
-    document.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-action]');
-        if (!btn) return;
-
-        const action = btn.dataset.action;
-        const id = btn.dataset.id ? parseInt(btn.dataset.id) : null;
-
-        // Add actions
-        if (action === 'add-deliverable') return capstoneHub.addDeliverable();
-        if (action === 'add-process') return capstoneHub.addProcess();
-        if (action === 'add-ai-technology') return capstoneHub.addAITechnology();
-        if (action === 'add-software-tool') return capstoneHub.addSoftwareTool();
-        if (action === 'add-research-item') return capstoneHub.addResearchItem();
-        if (action === 'add-integration') return capstoneHub.addIntegration();
-
-        // Special actions
-        if (action === 'edit-process-dropdowns') return editProcessDropdowns();
-
-        // Edit actions
-        if (action === 'edit-deliverable' && id) return capstoneHub.editDeliverable(id);
-        if (action === 'edit-process' && id) return capstoneHub.editProcess(id);
-        if (action === 'edit-ai-technology' && id) return capstoneHub.editAITechnology(id);
-        if (action === 'edit-software-tool' && id) return capstoneHub.editSoftwareTool(id);
-        if (action === 'edit-research-item' && id) return capstoneHub.editResearchItem(id);
-        if (action === 'edit-integration' && id) return capstoneHub.editIntegration(id);
-
-        // Delete actions
-        if (action === 'delete-deliverable' && id) return capstoneHub.deleteDeliverable(id);
-        if (action === 'delete-process' && id) return capstoneHub.deleteProcess(id);
-        if (action === 'delete-ai-technology' && id) return capstoneHub.deleteAITechnology(id);
-        if (action === 'delete-software-tool' && id) return capstoneHub.deleteSoftwareTool(id);
-        if (action === 'delete-research-item' && id) return capstoneHub.deleteResearchItem(id);
-        if (action === 'delete-integration' && id) return capstoneHub.deleteIntegration(id);
-
-        // Modal close
-        if (action === 'close-modal') return capstoneHub.closeModal();
-    });
-
     // Override the addProcess function to use dynamic options (must run after capstoneHub is initialized)
     const originalAddProcess = capstoneHub.addProcess;
     capstoneHub.addProcess = function() {
@@ -1487,7 +993,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" data-action="close-modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                     <button type="submit" class="btn btn-primary">Add Process</button>
                 </div>
             </form>
@@ -1507,13 +1013,9 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                const token = await getCSRFToken();
                 const response = await fetch('/api/business-processes', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': token
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
 

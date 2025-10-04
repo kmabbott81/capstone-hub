@@ -3,6 +3,7 @@ from datetime import datetime
 from src.models.database import db
 from src.models.integration import Integration
 from src.routes.auth import require_admin
+from src.extensions import csrf
 
 integrations_bp = Blueprint('integrations', __name__)
 
@@ -23,6 +24,7 @@ def get_integrations():
 
 @integrations_bp.route('/api/integrations', methods=['POST'])
 @require_admin
+@csrf.protect
 def create_integration():
     """Create a new integration"""
     data = request.get_json()
@@ -61,6 +63,7 @@ def create_integration():
 
 @integrations_bp.route('/api/integrations/<int:integration_id>', methods=['PUT'])
 @require_admin
+@csrf.protect
 def update_integration(integration_id):
     """Update an existing integration"""
     data = request.get_json()
@@ -100,6 +103,7 @@ def update_integration(integration_id):
 
 @integrations_bp.route('/api/integrations/<int:integration_id>', methods=['DELETE'])
 @require_admin
+@csrf.protect
 def delete_integration(integration_id):
     """Delete an integration"""
     integration = Integration.query.get(integration_id)

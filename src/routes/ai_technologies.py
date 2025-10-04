@@ -3,6 +3,7 @@ from datetime import datetime
 from src.models.ai_technology import AITechnology
 from src.models.database import db
 from src.routes.auth import require_admin
+from src.extensions import csrf
 
 ai_technologies_bp = Blueprint('ai_technologies', __name__)
 
@@ -14,6 +15,7 @@ def get_ai_technologies():
 
 @ai_technologies_bp.route('/api/ai-technologies', methods=['POST'])
 @require_admin
+@csrf.protect
 def create_ai_technology():
     """Create a new AI technology"""
     data = request.get_json()
@@ -57,6 +59,7 @@ def create_ai_technology():
 
 @ai_technologies_bp.route('/api/ai-technologies/<int:tech_id>', methods=['PUT'])
 @require_admin
+@csrf.protect
 def update_ai_technology(tech_id):
     """Update an existing AI technology"""
     data = request.get_json()
@@ -101,6 +104,7 @@ def update_ai_technology(tech_id):
 
 @ai_technologies_bp.route('/api/ai-technologies/<int:tech_id>', methods=['DELETE'])
 @require_admin
+@csrf.protect
 def delete_ai_technology(tech_id):
     """Delete an AI technology"""
     tech = AITechnology.query.get(tech_id)
