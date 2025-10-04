@@ -551,7 +551,7 @@ class CapstoneHub {
                     <input type="date" id="deliverable-due-date" class="form-control">
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
+                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
                     <button type="submit" class="btn-primary">Add Deliverable</button>
                 </div>
             </form>
@@ -638,7 +638,7 @@ class CapstoneHub {
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
+                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
                     <button type="submit" class="btn-primary">Add Process</button>
                 </div>
             </form>
@@ -1006,7 +1006,7 @@ class CapstoneHub {
                     <textarea id="ai-tech-description" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
+                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
                     <button type="submit" class="btn-primary">Add AI Technology</button>
                 </div>
             </form>
@@ -1094,7 +1094,7 @@ class CapstoneHub {
                     <textarea id="tool-description" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
+                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
                     <button type="submit" class="btn-primary">Add Software Tool</button>
                 </div>
             </form>
@@ -1180,7 +1180,7 @@ class CapstoneHub {
                     <textarea id="research-description" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
+                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
                     <button type="submit" class="btn-primary">Add Research Item</button>
                 </div>
             </form>
@@ -1268,7 +1268,7 @@ class CapstoneHub {
                     <textarea id="integration-purpose" class="form-control" rows="3" placeholder="What will this integration accomplish?"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
+                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
                     <button type="submit" class="btn-primary">Add Integration</button>
                 </div>
             </form>
@@ -1381,6 +1381,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (action === 'add-research-item') return capstoneHub.addResearchItem();
         if (action === 'add-integration') return capstoneHub.addIntegration();
 
+        // Special actions
+        if (action === 'edit-process-dropdowns') return editProcessDropdowns();
+
         // Edit actions
         if (action === 'edit-deliverable' && id) return capstoneHub.editDeliverable(id);
         if (action === 'edit-process' && id) return capstoneHub.editProcess(id);
@@ -1441,7 +1444,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-action="close-modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Add Process</button>
                 </div>
             </form>
