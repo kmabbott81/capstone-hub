@@ -1,11 +1,12 @@
 from flask import Blueprint, request, jsonify, session
 from datetime import datetime, timedelta
 import hashlib
+import os
 
 auth_bp = Blueprint('auth', __name__)
 
-# Simple password configuration
-ADMIN_PASSWORD = "HLStearns2025!"
+# Password configuration - read from environment variables
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'HLStearns2025!')  # Default for local development
 VIEWER_PASSWORD = "CapstoneView"
 
 @auth_bp.route('/api/auth/login', methods=['POST'])
