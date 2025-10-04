@@ -33,26 +33,46 @@ class AuthManager {
         if (existingButton) {
             existingButton.remove();
         }
-        
+
         // Add floating admin login button in bottom right
         const loginButton = document.createElement('div');
         loginButton.className = 'floating-admin-login';
         loginButton.innerHTML = `
-            <button class="floating-login-btn" onclick="authManager.showAdminLogin()" title="Admin Login">
+            <button class="floating-login-btn" data-action="admin-login" title="Admin Login">
                 <span class="login-icon">🔐</span>
             </button>
         `;
         document.body.appendChild(loginButton);
+
+        // Add event listener (CSP-compliant)
+        const btn = loginButton.querySelector('[data-action="admin-login"]');
+        btn.addEventListener('click', () => this.showAdminLogin());
     }
 
-    showAdminLogin() {
+    async showAdminLogin() {
         const password = prompt('Enter admin password to enable editing:');
-        if (password === 'HLStearns2025!') {
-            this.setUserRole('admin');
-            alert('✅ Admin access granted! You can now edit content.');
-            location.reload();
-        } else if (password !== null) {
-            alert('❌ Incorrect password. Access denied.');
+        if (!password) return;
+
+        try {
+            // Verify password with server
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.role === 'admin') {
+                this.setUserRole('admin');
+                alert('✅ Admin access granted! You can now edit content.');
+                location.reload();
+            } else {
+                alert('❌ Incorrect password. Access denied.');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('❌ Login failed. Please try again.');
         }
     }
 
@@ -72,7 +92,7 @@ class AuthManager {
         // Remove existing indicator
         const existing = document.querySelector('.admin-status-indicator');
         if (existing) existing.remove();
-        
+
         // Add admin status indicator
         const indicator = document.createElement('div');
         indicator.className = 'admin-status-indicator';
@@ -80,10 +100,14 @@ class AuthManager {
             <div class="admin-badge">
                 <span class="admin-icon">👑</span>
                 <span class="admin-text">Admin</span>
-                <button class="logout-btn" onclick="authManager.logout()">Logout</button>
+                <button class="logout-btn" data-action="logout">Logout</button>
             </div>
         `;
         document.body.appendChild(indicator);
+
+        // Add event listener (CSP-compliant)
+        const logoutBtn = indicator.querySelector('[data-action="logout"]');
+        logoutBtn.addEventListener('click', () => this.logout());
     }
     
     removeAdminStatusIndicator() {
