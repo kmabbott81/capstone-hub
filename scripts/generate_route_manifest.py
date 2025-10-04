@@ -40,17 +40,32 @@ def extract_routes_from_file(filepath):
             else:
                 methods = ['GET']  # Default Flask method
 
-            # Look ahead for decorators and function name
+            # Collect all decorators (backwards AND forwards until function def)
             decorators = []
+
+            # Look backwards from @route
             j = i - 1
-            while j >= 0 and (lines[j].strip().startswith('@') or not lines[j].strip()):
-                if lines[j].strip().startswith('@'):
-                    decorators.append(lines[j].strip())
+            while j >= 0:
+                line_stripped = lines[j].strip()
+                if line_stripped.startswith('@'):
+                    decorators.append(line_stripped)
+                elif line_stripped and not line_stripped.startswith('#'):
+                    break
                 j -= 1
 
-            # Get function name
-            func_match = re.search(r'def\s+(\w+)\(', lines[i + 1] if i + 1 < len(lines) else '')
-            func_name = func_match.group(1) if func_match else 'unknown'
+            # Look forwards from @route until we hit the function definition
+            func_name = 'unknown'
+            for k in range(i + 1, min(i + 10, len(lines))):
+                line_stripped = lines[k].strip()
+                if line_stripped.startswith('@'):
+                    # Found another decorator after @route
+                    decorators.append(line_stripped)
+                elif line_stripped.startswith('def '):
+                    # Found the function definition
+                    func_match = re.search(r'def\s+(\w+)\(', lines[k])
+                    if func_match:
+                        func_name = func_match.group(1)
+                    break
 
             # Determine security controls
             has_require_admin = any('@require_admin' in d for d in decorators)

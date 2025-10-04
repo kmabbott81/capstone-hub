@@ -84,21 +84,22 @@ async def read_burst(session, n=100):
     return [getattr(r, "status", 0) for r in results]
 
 async def main():
-    cookies = aiohttp.CookieJar()
-    async with aiohttp.ClientSession(cookie_jar=cookies) as session:
-        print(">> CSRF negative:", await csrf_negative(session))
+    # Test CSRF without affecting rate limits
+    async with aiohttp.ClientSession() as temp_session:
+        print(">> CSRF negative:", await csrf_negative(temp_session))
 
-        if not ADMIN_PASSWORD:
-            print("!! ADMIN_PASSWORD not set; skipping admin-only tests")
-            return
+    if not ADMIN_PASSWORD:
+        print("!! ADMIN_PASSWORD not set; skipping admin-only tests")
+        return
 
-        # Wrong-password burst - expect 429 on last call
-        codes = await burst_login_rate_limit(session)
+    # Test rate limiting with throwaway session
+    async with aiohttp.ClientSession() as temp_session:
+        codes = await burst_login_rate_limit(temp_session)
         print(">> Login burst:", codes)
 
-        # Wait 1 second for rate limit window to pass
-        await asyncio.sleep(1)
-
+    # Use fresh session for actual admin work
+    cookies = aiohttp.CookieJar()
+    async with aiohttp.ClientSession(cookie_jar=cookies) as session:
         # Login as admin
         ok = await login(session)
         print(">> Admin login status:", ok)
