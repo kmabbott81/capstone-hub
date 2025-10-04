@@ -693,6 +693,126 @@ class CapstoneHub {
         }
     }
 
+    async deleteProcess(id) {
+        if (!confirm('Are you sure you want to delete this business process?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/business-processes/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.ok) {
+                this.data.processes = this.data.processes.filter(p => p.id !== id);
+                this.loadProcesses();
+                this.updateDashboard();
+                showNotification('Business process deleted successfully!', 'success');
+            } else {
+                const error = await response.json();
+                showNotification(error.error || 'Error deleting business process', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting business process:', error);
+            showNotification('Error deleting business process', 'error');
+        }
+    }
+
+    editProcess(id) {
+        // Find the process
+        const process = this.data.processes.find(p => p.id === id);
+        if (!process) {
+            showNotification('Business process not found', 'error');
+            return;
+        }
+
+        const options = getDropdownOptions();
+
+        const form = `
+            <form id="process-form">
+                <div class="form-group mb-3">
+                    <label for="process-name">Process Name</label>
+                    <input type="text" id="process-name" class="form-control" value="${escapeHTML(process.name)}" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="process-department">Department</label>
+                    <select id="process-department" class="form-control" required>
+                        <option value="">Select Department</option>
+                        ${options.departments.map(dept =>
+                            `<option value="${escapeHTML(dept)}" ${process.department === dept ? 'selected' : ''}>${escapeHTML(dept)}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="process-description">Description</label>
+                    <textarea id="process-description" class="form-control" rows="3" required>${escapeHTML(process.description || '')}</textarea>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="process-automation">Automation Potential</label>
+                    <select id="process-automation" class="form-control" required>
+                        <option value="">Select Automation Potential</option>
+                        ${options.automationLevels.map(level =>
+                            `<option value="${escapeHTML(level)}" ${process.automation_potential === level ? 'selected' : ''}>${escapeHTML(level)}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
+                    <button type="submit" class="btn-primary">Update Process</button>
+                </div>
+            </form>
+        `;
+        this.showModal('Edit Business Process', form);
+
+        // Add form submit handler
+        setTimeout(() => {
+            const formElement = document.getElementById('process-form');
+            if (formElement) {
+                formElement.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.updateProcess(id);
+                });
+            }
+        }, 100);
+    }
+
+    async updateProcess(id) {
+        const name = document.getElementById('process-name').value;
+        const department = document.getElementById('process-department').value;
+        const description = document.getElementById('process-description').value;
+        const automationPotential = document.getElementById('process-automation').value;
+
+        try {
+            const response = await fetch(`/api/business-processes/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    department: department,
+                    description: description,
+                    automation_potential: automationPotential
+                })
+            });
+
+            if (response.ok) {
+                this.closeModal();
+                this.loadProcesses();
+                this.updateDashboard();
+                showNotification('Business process updated successfully!', 'success');
+            } else {
+                showNotification('Error updating business process', 'error');
+            }
+        } catch (error) {
+            console.error('Error updating business process:', error);
+            showNotification('Error updating business process', 'error');
+        }
+    }
+
     addAITechnology() {
         const form = `
             <form id="ai-tech-form">
