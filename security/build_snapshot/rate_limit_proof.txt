@@ -1,4 +1,4 @@
-Rate Limit Verification - 2025-10-04T12:03:57-07:00
+Rate Limit Verification - 2025-10-04T13:07:46-07:00
 Target: https://mabbottmbacapstone.up.railway.app/api/auth/login
 Policy: 5 attempts per 15 minutes
 

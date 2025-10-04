@@ -1,4 +1,4 @@
-Security Headers Verification - 2025-10-04T12:15:22.774716
+Security Headers Verification - 2025-10-04T13:08:01.623273
 Target: https://mabbottmbacapstone.up.railway.app
 
 HTTP Status: 200
