@@ -13,3 +13,16 @@ build/
 .env
 .DS_Store
 *.db-journal
+
+# Node.js / Playwright
+node_modules/
+
+# Playwright artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+artifacts/
+
+# Visual regression temp files
+ui_snapshots/*-actual.png
+ui_snapshots/*-diff.png
