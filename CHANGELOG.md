@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.36.1] - 2025-10-04 - Phase 1b Hardening
+
+### Added
+- **Password Hashing**: werkzeug.security for PBKDF2-SHA256 password hashing
+- **Custom Session Cookie**: `capstonehub_session` name to avoid collisions
+- **Logging System**: Rotating file logs with sensitive field redaction (`src/logging_config.py`)
+- **CSP Hardening**: Added `object-src 'none'` and `frame-ancestors 'none'` directives
+- **Build Verification**: `scripts/verify_build.sh` runs tests + pip-audit + manifest generation
+- **Environment Validator**: `scripts/validate_env.py` with color-coded readiness banner
+- **Environment Sample**: `.env.sample` with all required/recommended variables documented
+
+### Changed
+- **Auth System**: Supports both hashed (`ADMIN_PASSWORD_HASH`) and plain (`ADMIN_PASSWORD`) passwords
+- **Viewer Password**: Moved from hardcoded to environment variable (`VIEWER_PASSWORD`)
+- **Logging**: 10MB rotating logs with 5 backups, INFO level in production
+- **Log Redaction**: Automatically redacts password, token, key, secret fields from logs
+
+### Security
+- All passwords now support secure hashing (recommended for production)
+- Sensitive data automatically redacted from log files
+- CSP policy tightened to prevent object/embed attacks
+- Custom session cookie name reduces fingerprinting risk
+
+### Operations
+- Pre-flight checks via `verify_build.sh` catch issues before deployment
+- Environment validation prevents startup with missing critical vars
+- Comprehensive `.env.sample` serves as deployment checklist
+
+### Documentation
+- Updated audit evidence with remediation package
+- Fixed route manifest generator to detect all `@require_admin` decorators
+- Created `RISK_ACCEPTANCE.md` for Bandit findings
+
+---
+
 ## [0.36.0] - 2025-10-04
 
 ### Added

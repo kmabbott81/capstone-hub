@@ -2,13 +2,17 @@ from flask import Blueprint, request, jsonify, session
 from datetime import datetime, timedelta
 import hashlib
 import os
+from werkzeug.security import check_password_hash
 from src.extensions import csrf, limiter
 
 auth_bp = Blueprint('auth', __name__)
 
 # Password configuration - read from environment variables
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'HLStearns2025!')  # Default for local development
-VIEWER_PASSWORD = "CapstoneView"
+# For production, use hashed passwords. For development, plain passwords are acceptable.
+ADMIN_PASSWORD_HASH = os.getenv('ADMIN_PASSWORD_HASH')  # pbkdf2:sha256 hash
+ADMIN_PASSWORD_PLAIN = os.getenv('ADMIN_PASSWORD')  # Fallback for development
+VIEWER_PASSWORD_HASH = os.getenv('VIEWER_PASSWORD_HASH')  # pbkdf2:sha256 hash
+VIEWER_PASSWORD_PLAIN = os.getenv('VIEWER_PASSWORD', 'CapstoneView')  # Fallback for development
 
 @auth_bp.route('/api/auth/login', methods=['POST'])
 @limiter.limit("5 per 15 minutes")
@@ -21,12 +25,19 @@ def login():
             return jsonify({'success': False, 'message': 'No data provided'}), 400
             
         password = data.get('password', '')
-        
-        if password == ADMIN_PASSWORD:
+
+        # Check admin credentials (prefer hash, fallback to plain)
+        is_admin = False
+        if ADMIN_PASSWORD_HASH and check_password_hash(ADMIN_PASSWORD_HASH, password):
+            is_admin = True
+        elif ADMIN_PASSWORD_PLAIN and password == ADMIN_PASSWORD_PLAIN:
+            is_admin = True
+
+        if is_admin:
             session.permanent = False
             session['user_role'] = 'admin'
             session['authenticated'] = True
-            
+
             return jsonify({
                 'success': True,
                 'role': 'admin',
@@ -39,12 +50,19 @@ def login():
                     'can_view_analytics': True
                 }
             })
-        
-        elif password == VIEWER_PASSWORD:
+
+        # Check viewer credentials (prefer hash, fallback to plain)
+        is_viewer = False
+        if VIEWER_PASSWORD_HASH and check_password_hash(VIEWER_PASSWORD_HASH, password):
+            is_viewer = True
+        elif VIEWER_PASSWORD_PLAIN and password == VIEWER_PASSWORD_PLAIN:
+            is_viewer = True
+
+        if is_viewer:
             session.permanent = False
             session['user_role'] = 'viewer'
             session['authenticated'] = True
-            
+
             return jsonify({
                 'success': True,
                 'role': 'viewer',

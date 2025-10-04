@@ -29,12 +29,14 @@ from src.routes.admin import admin_bp
 from src.routes.debug import debug_bp
 from flask_cors import CORS
 from src.extensions import csrf, limiter
+from src.logging_config import setup_logging
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'HL_Stearns_Capstone_2025_Secure_Key_#$%')
 app.config['SESSION_PERMANENT'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_COOKIE_NAME'] = 'capstonehub_session'  # Custom name to avoid collisions
 app.config['SESSION_COOKIE_SECURE'] = True  # HTTPS only
 app.config['SESSION_COOKIE_HTTPONLY'] = True  # No JS access
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
@@ -44,6 +46,9 @@ app.config['WTF_CSRF_TIME_LIMIT'] = None  # No expiration
 app.config['WTF_CSRF_SSL_STRICT'] = True  # Require HTTPS for CSRF protection
 app.config['WTF_CSRF_METHODS'] = ['POST', 'PUT', 'PATCH', 'DELETE']  # Methods to protect
 CORS(app)
+
+# Initialize logging with redaction
+logger = setup_logging(app)
 
 # Initialize extensions
 csrf.init_app(app)
@@ -120,6 +125,8 @@ def set_security_headers(response):
         "script-src 'self' https://cdnjs.cloudflare.com; "
         "font-src 'self' data: https://cdnjs.cloudflare.com; "
         "connect-src 'self'; "
+        "object-src 'none'; "
+        "frame-ancestors 'none'; "
         "report-uri /csp-report"
     )
     return response
