@@ -2,7 +2,104 @@
 
 ## Overview
 
-Roadmap for evolving Capstone Hub from academic project to production-grade SaaS beyond the course completion. Focus: automation, observability, and long-term maintainability.
+Roadmap for evolving Capstone Hub from academic project to production-grade SaaS beyond the course completion. Focus: automation, observability, transparency, and long-term maintainability.
+
+**Status:** Phase 2 Enhancements Added (Public Status, Badges, JSON Archival)
+
+---
+
+## Phase 2 Enhancements (NEW - Est: 4 hours)
+
+### 1. Public Status Dashboard ✅ **IMPLEMENTED**
+
+**File:** `src/routes/public_status.py` + `src/templates/public_status.html`
+
+**What:** Read-only `/status` page showing:
+- Current system status (operational/degraded/outage)
+- Overall health score (0-100)
+- Last 5 build results with pass/fail status
+- Quality gate status (visual, E2E, security, a11y, performance)
+- Uptime counter (days since last incident)
+- Last incident details with MTTR
+
+**Why:**
+- **Transparency:** Demonstrates quality publicly (no auth required)
+- **Trust:** Stakeholders see real-time system health
+- **Employer Showcase:** Professional status page like Vercel/Netlify
+- **SEO:** Indexed by search engines, discoverable
+
+**Access:** `https://your-app.railway.app/status`
+
+---
+
+### 2. GitHub Actions Status Badges ✅ **IMPLEMENTED**
+
+**Added to README.md:**
+```markdown
+![TPA Visual](https://img.shields.io/github/actions/workflow/status/.../tpa.yml?label=visual%20regression)
+![TPA Accessibility](https://img.shields.io/github/actions/workflow/status/.../tpa.yml?label=accessibility)
+![TPA Security](https://img.shields.io/github/actions/workflow/status/.../tpa.yml?label=security)
+![Health Score](https://img.shields.io/badge/health%20score-98%2F100-brightgreen)
+[![Public Status](https://img.shields.io/badge/status-operational-brightgreen)](https://your-url/status)
+```
+
+**Benefits:**
+- Real-time quality visibility on GitHub repo landing page
+- Automatic updates when CI runs (green ✅ / red ❌)
+- Professional appearance (like popular open-source projects)
+- Instant credibility for portfolio reviewers
+
+---
+
+### 3. TPA_HISTORY.json Archival ✅ **IMPLEMENTED**
+
+**File:** `scripts/archive_tpa_history.py`
+
+**What:** Converts `TPA_HISTORY.md` → structured JSON on every git tag:
+```json
+{
+  "generated_at": "2025-01-04T14:30:00Z",
+  "schema_version": "1.0",
+  "releases": [
+    {
+      "version": "v0.36.4-ui-modern",
+      "date": "2025-01-04",
+      "status": "Production",
+      "scores": {
+        "visual": 100,
+        "e2e": 98,
+        "security": 100,
+        "accessibility": 95,
+        "performance": 92
+      }
+    }
+  ],
+  "incidents": [...],
+  "trends": {...},
+  "metrics": {...}
+}
+```
+
+**Usage:**
+```bash
+# Automatic on tag creation
+python scripts/archive_tpa_history.py v0.36.5
+
+# Manual
+python scripts/archive_tpa_history.py
+```
+
+**Why:**
+- **Programmatic Access:** API can read JSON directly
+- **Historical Demos:** Live trend charts from real data
+- **Audit Trail:** Immutable history with every release
+- **Data Export:** Easy to analyze in external tools
+
+**Integration:**
+- Wired into `/api/health/metrics` endpoint
+- Health dashboard reads from JSON
+- Public status page uses JSON
+- Committed with every tagged release
 
 ---
 

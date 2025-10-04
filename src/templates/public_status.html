@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status - Capstone Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}?v=0.36.4">
+    <meta name="description" content="Real-time status and quality metrics for Capstone Hub">
+    <meta name="robots" content="index, follow">
+    <style>
+        .status-header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+        }
+        .status-indicator {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .status-indicator.operational { color: #10b981; }
+        .status-indicator.degraded { color: #f59e0b; }
+        .status-indicator.outage { color: #ef4444; }
+
+        .build-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .build-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .build-status {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .build-status.passed { background: #10b981; }
+        .build-status.failed { background: #ef4444; }
+        .build-status.running { background: #3b82f6; animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .quality-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .quality-card {
+            padding: 1.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .quality-card .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .status-dot.passing { background: #10b981; }
+        .status-dot.failing { background: #ef4444; }
+        .status-dot.pending { background: #9ca3af; }
+
+        .metric-large {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0.5rem 0;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.875rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-narrow">
+        <!-- Header -->
+        <div class="status-header">
+            <div class="status-indicator operational" id="status-indicator">●</div>
+            <h1>System Status</h1>
+            <p class="meta" id="status-message">All systems operational</p>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="grid-auto mb-4">
+            <div class="card">
+                <h3>Health Score</h3>
+                <div class="metric-large" id="health-score">--</div>
+                <p class="meta">Overall quality</p>
+            </div>
+            <div class="card">
+                <h3>Current Version</h3>
+                <div class="metric-large" style="font-size: 1.5rem;" id="current-version">--</div>
+                <p class="meta">Deployed</p>
+            </div>
+            <div class="card">
+                <h3>Uptime</h3>
+                <div class="metric-large" id="uptime-days">--</div>
+                <p class="meta">Days since last incident</p>
+            </div>
+        </div>
+
+        <!-- Quality Gates Status -->
+        <div class="card mb-4">
+            <h2 class="mb-3">Quality Gates</h2>
+            <div class="quality-grid" id="quality-gates">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Recent Builds -->
+        <div class="card mb-4">
+            <h2 class="mb-3">Recent Builds</h2>
+            <div class="build-list" id="build-list">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Last Incident -->
+        <div class="card mb-4" id="last-incident-card">
+            <h2 class="mb-3">Last Incident</h2>
+            <div id="last-incident-content">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="last-updated">
+            <p>Last updated: <span id="last-updated-time">--</span></p>
+            <p class="meta">Auto-refreshes every 60 seconds</p>
+            <p class="meta">
+                <a href="/" style="color: var(--brand);">← Back to Capstone Hub</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        async function loadStatus() {
+            try {
+                const response = await fetch('/api/public/status');
+                const data = await response.json();
+
+                // Update status indicator
+                const indicator = document.getElementById('status-indicator');
+                const message = document.getElementById('status-message');
+                indicator.className = `status-indicator ${data.system_status}`;
+
+                if (data.system_status === 'operational') {
+                    message.textContent = 'All systems operational';
+                } else if (data.system_status === 'degraded') {
+                    message.textContent = 'Performance degraded';
+                } else {
+                    message.textContent = 'System outage';
+                }
+
+                // Update key metrics
+                document.getElementById('health-score').textContent = data.health_score + '/100';
+                document.getElementById('current-version').textContent = data.current_version;
+                document.getElementById('uptime-days').textContent = data.uptime_days;
+
+                // Update quality gates
+                renderQualityGates(data.quality_gates);
+
+                // Update recent builds
+                renderBuilds(data.recent_builds);
+
+                // Update last incident
+                if (data.last_incident) {
+                    renderLastIncident(data.last_incident);
+                } else {
+                    document.getElementById('last-incident-card').style.display = 'none';
+                }
+
+                // Update timestamp
+                const timestamp = new Date(data.timestamp);
+                document.getElementById('last-updated-time').textContent = timestamp.toLocaleString();
+
+            } catch (error) {
+                console.error('Failed to load status:', error);
+                document.getElementById('status-message').textContent = 'Unable to load status';
+            }
+        }
+
+        function renderQualityGates(gates) {
+            const container = document.getElementById('quality-gates');
+            container.innerHTML = Object.entries(gates).map(([name, gate]) => {
+                const displayName = name.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                const statusClass = gate.status === 'passing' ? 'passing' :
+                                  gate.status === 'not_implemented' ? 'pending' : 'failing';
+                const statusText = gate.status === 'not_implemented' ? 'Pending' :
+                                 gate.status === 'passing' ? 'Passing' : 'Failing';
+
+                return `
+                    <div class="quality-card">
+                        <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <span class="status-dot ${statusClass}"></span>
+                            <strong>${displayName}</strong>
+                        </div>
+                        <p class="meta">${statusText}</p>
+                        ${gate.tests ? `<p class="meta">${gate.passed}/${gate.tests} tests passing</p>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderBuilds(builds) {
+            const container = document.getElementById('build-list');
+            if (!builds || builds.length === 0) {
+                container.innerHTML = '<p class="meta">No recent builds</p>';
+                return;
+            }
+
+            container.innerHTML = builds.map(build => {
+                const statusClass = build.status === 'passed' ? 'passed' :
+                                  build.status === 'running' ? 'running' : 'failed';
+                const duration = Math.floor(build.duration_seconds / 60);
+
+                return `
+                    <div class="build-item">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="build-status ${statusClass}"></div>
+                            <div>
+                                <strong>${build.version}</strong>
+                                <p class="meta">${build.date} • ${duration}m ${build.duration_seconds % 60}s</p>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            ${build.scores && build.scores.visual !== null ?
+                              `<span class="badge" style="background: #10b981; color: white;">Visual ${build.scores.visual}%</span>` : ''}
+                            ${build.scores && build.scores.security !== null ?
+                              `<span class="badge" style="background: #2563eb; color: white;">Security ${build.scores.security}%</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderLastIncident(incident) {
+            const container = document.getElementById('last-incident-content');
+            const severityClass = incident.severity.toLowerCase();
+
+            container.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <strong>${incident.title}</strong>
+                        <p class="meta">${incident.date}</p>
+                        <p class="meta">MTTR: ${incident.mttr_hours} hours</p>
+                    </div>
+                    <div>
+                        <span class="badge ${severityClass}">${incident.severity}</span>
+                        ${incident.resolved ? '<span class="badge" style="background: #10b981; color: white;">Resolved</span>' : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load on page load
+        loadStatus();
+
+        // Refresh every 60 seconds
+        setInterval(loadStatus, 60 * 1000);
+    </script>
+</body>
+</html>

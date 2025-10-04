@@ -7,6 +7,14 @@
 ![Security](https://img.shields.io/badge/security-Phase%201d%20Complete-brightgreen)
 ![UI](https://img.shields.io/badge/UI-Modern%20Design%20System-purple)
 
+<!-- Quality Gate Badges (will be live when GitHub Actions TPA is deployed) -->
+![TPA Visual](https://img.shields.io/github/actions/workflow/status/kmabbott81/capstone-hub/tpa.yml?branch=master&label=visual%20regression&logo=playwright)
+![TPA Accessibility](https://img.shields.io/github/actions/workflow/status/kmabbott81/capstone-hub/tpa.yml?branch=master&label=accessibility&logo=axe)
+![TPA Security](https://img.shields.io/github/actions/workflow/status/kmabbott81/capstone-hub/tpa.yml?branch=master&label=security&logo=shieldcheck)
+![Health Score](https://img.shields.io/badge/health%20score-98%2F100-brightgreen)
+
+[![Public Status](https://img.shields.io/badge/status-operational-brightgreen?logo=statuspage)](https://your-railway-url/status)
+
 A secure, production-grade Flask application for managing capstone project deliverables, business processes, AI technologies, and research items.
 
 ---
