@@ -1,0 +1,566 @@
+{
+  "generated": "2025-10-04",
+  "version": "0.36.0",
+  "summary": {
+    "total_routes": 61,
+    "read_routes": 30,
+    "write_routes": 31,
+    "admin_protected": 0,
+    "csrf_protected": 31,
+    "coverage": {
+      "admin": "0/31",
+      "csrf": "31/31"
+    }
+  },
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/api/admin/backup",
+      "function": "unknown",
+      "file": "src\\routes\\admin.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai-technologies",
+      "function": "get_ai_technologies",
+      "file": "src\\routes\\ai_technologies.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai-technologies",
+      "function": "unknown",
+      "file": "src\\routes\\ai_technologies.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/ai-technologies/<int:tech_id>",
+      "function": "unknown",
+      "file": "src\\routes\\ai_technologies.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/ai-technologies/<int:tech_id>",
+      "function": "unknown",
+      "file": "src\\routes\\ai_technologies.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai-technologies/categories",
+      "function": "get_ai_categories",
+      "file": "src\\routes\\ai_technologies.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai-technologies/providers",
+      "function": "get_ai_providers",
+      "file": "src\\routes\\ai_technologies.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/analytics/dashboard",
+      "function": "get_dashboard_analytics",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/analytics/progress-report",
+      "function": "generate_progress_report",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/change-password",
+      "function": "unknown",
+      "file": "src\\routes\\auth.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "function": "unknown",
+      "file": "src\\routes\\auth.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "function": "logout",
+      "file": "src\\routes\\auth.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session-info",
+      "function": "unknown",
+      "file": "src\\routes\\auth.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/status",
+      "function": "get_auth_status",
+      "file": "src\\routes\\auth.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/backup/create",
+      "function": "create_backup",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/business-processes",
+      "function": "get_business_processes",
+      "file": "src\\routes\\business_processes.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/business-processes",
+      "function": "unknown",
+      "file": "src\\routes\\business_processes.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/business-processes/<int:process_id>",
+      "function": "unknown",
+      "file": "src\\routes\\business_processes.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/business-processes/<int:process_id>",
+      "function": "unknown",
+      "file": "src\\routes\\business_processes.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/business-processes/automation-levels",
+      "function": "get_automation_levels",
+      "file": "src\\routes\\business_processes.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/business-processes/departments",
+      "function": "get_departments",
+      "file": "src\\routes\\business_processes.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/collaboration/share",
+      "function": "share_project",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/deliverables",
+      "function": "get_deliverables",
+      "file": "src\\routes\\deliverables.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/deliverables",
+      "function": "unknown",
+      "file": "src\\routes\\deliverables.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/deliverables/<int:deliverable_id>",
+      "function": "unknown",
+      "file": "src\\routes\\deliverables.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/deliverables/<int:deliverable_id>",
+      "function": "unknown",
+      "file": "src\\routes\\deliverables.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/deliverables/phases",
+      "function": "get_phases",
+      "file": "src\\routes\\deliverables.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/export/data",
+      "function": "export_data",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations",
+      "function": "get_integrations",
+      "file": "src\\routes\\integrations.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/integrations",
+      "function": "unknown",
+      "file": "src\\routes\\integrations.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/integrations/<int:integration_id>",
+      "function": "unknown",
+      "file": "src\\routes\\integrations.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/integrations/<int:integration_id>",
+      "function": "unknown",
+      "file": "src\\routes\\integrations.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/authentication-methods",
+      "function": "get_authentication_methods",
+      "file": "src\\routes\\integrations.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/integrations/google/connect",
+      "function": "connect_google",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/integrations/microsoft/connect",
+      "function": "connect_microsoft",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/integrations/notion/connect",
+      "function": "connect_notion",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/platforms",
+      "function": "get_integration_platforms",
+      "file": "src\\routes\\integrations.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/sync-frequencies",
+      "function": "get_sync_frequencies",
+      "file": "src\\routes\\integrations.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/types",
+      "function": "get_integration_types",
+      "file": "src\\routes\\integrations.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/recommendations/ai-technologies",
+      "function": "get_ai_recommendations",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/recommendations/processes",
+      "function": "get_process_recommendations",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research-items",
+      "function": "get_research_items",
+      "file": "src\\routes\\research_items.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/research-items",
+      "function": "unknown",
+      "file": "src\\routes\\research_items.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/research-items/<int:item_id>",
+      "function": "unknown",
+      "file": "src\\routes\\research_items.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/research-items/<int:item_id>",
+      "function": "unknown",
+      "file": "src\\routes\\research_items.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research-items/data-sources",
+      "function": "get_data_sources",
+      "file": "src\\routes\\research_items.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research-items/methods",
+      "function": "get_research_methods",
+      "file": "src\\routes\\research_items.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research-items/suggested-questions",
+      "function": "get_suggested_questions",
+      "file": "src\\routes\\research_items.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/search",
+      "function": "search_all_data",
+      "file": "src\\routes\\advanced_features.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/software-tools",
+      "function": "get_software_tools",
+      "file": "src\\routes\\software_tools.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/software-tools",
+      "function": "unknown",
+      "file": "src\\routes\\software_tools.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/software-tools/<int:tool_id>",
+      "function": "unknown",
+      "file": "src\\routes\\software_tools.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/software-tools/<int:tool_id>",
+      "function": "unknown",
+      "file": "src\\routes\\software_tools.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/software-tools/categories",
+      "function": "get_tool_categories",
+      "file": "src\\routes\\software_tools.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/software-tools/evaluation-criteria",
+      "function": "get_evaluation_criteria",
+      "file": "src\\routes\\software_tools.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/software-tools/types",
+      "function": "get_tool_types",
+      "file": "src\\routes\\software_tools.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/users",
+      "function": "get_users",
+      "file": "src\\routes\\user.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "POST",
+      "path": "/users",
+      "function": "create_user",
+      "file": "src\\routes\\user.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "DELETE",
+      "path": "/users/<int:user_id>",
+      "function": "delete_user",
+      "file": "src\\routes\\user.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "GET",
+      "path": "/users/<int:user_id>",
+      "function": "get_user",
+      "file": "src\\routes\\user.py",
+      "requires_admin": false,
+      "csrf_protected": false,
+      "rate_limit": "n/a"
+    },
+    {
+      "method": "PUT",
+      "path": "/users/<int:user_id>",
+      "function": "update_user",
+      "file": "src\\routes\\user.py",
+      "requires_admin": false,
+      "csrf_protected": true,
+      "rate_limit": "n/a"
+    }
+  ]
+}
