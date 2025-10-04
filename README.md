@@ -363,6 +363,17 @@ MIT License - see LICENSE file for details
 - **Documentation**: See docs/ directory
 - **Issues**: Create GitHub issue with details
 - **Security**: security@hlstearns.local
+- **Privacy**: privacy@hlstearns.local
+
+---
+
+## Governance and Compliance
+
+- **[SECURITY.md](SECURITY.md)** - Security policy and vulnerability disclosure
+- **[PRIVACY.md](PRIVACY.md)** - Privacy policy and data subject rights
+- **[DATA_RETENTION.md](DATA_RETENTION.md)** - Data retention and purge policies
+
+These policies ensure Capstone Hub meets academic and professional standards for data governance, privacy protection, and security compliance.
 
 ---
 

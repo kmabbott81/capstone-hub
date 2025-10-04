@@ -248,7 +248,11 @@ Current CSP allows:
 - **Personal Data**: No PII collected beyond session cookies
 - **Data Retention**: Sessions expire after 30 minutes of inactivity
 - **Data Deletion**: Users can request data deletion via admin
-- **Backup Policy**: Weekly database backups, retained for 30 days
+- **Backup Policy**: Weekly database backups, retained for 14 days
+
+**See Also:**
+- [PRIVACY.md](PRIVACY.md) - Complete privacy policy and data subject rights
+- [DATA_RETENTION.md](DATA_RETENTION.md) - Detailed retention schedules and purge procedures
 
 ---
 
@@ -282,6 +286,13 @@ Current CSP allows:
 
 ## Additional Resources
 
+### Internal Documentation
+- [PRIVACY.md](PRIVACY.md) - Privacy policy and data subject rights
+- [DATA_RETENTION.md](DATA_RETENTION.md) - Data retention and purge policies
+- [docs/OPS_CHECKLIST.md](docs/OPS_CHECKLIST.md) - Operations runbook
+- [docs/CHANGE_CONTROL.md](docs/CHANGE_CONTROL.md) - Change management procedures
+
+### External Resources
 - [OWASP Top 10](https://owasp.org/Top10/)
 - [Flask Security Best Practices](https://flask.palletsprojects.com/en/latest/security/)
 - [CWE Top 25](https://cwe.mitre.org/top25/)
