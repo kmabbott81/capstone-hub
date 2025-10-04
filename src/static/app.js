@@ -51,7 +51,7 @@ class CapstoneHub {
 
     // Navigation Management
     setupNavigation() {
-        const navItems = document.querySelectorAll('.nav-item');
+        const navItems = document.querySelectorAll('.nav-link');
         navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -63,7 +63,7 @@ class CapstoneHub {
 
     navigateToSection(section) {
         // Update active nav item
-        document.querySelectorAll('.nav-item').forEach(item => {
+        document.querySelectorAll('.nav-link').forEach(item => {
             item.classList.remove('active');
         });
         document.querySelector(`[data-section="${section}"]`).classList.add('active');
@@ -81,18 +81,18 @@ class CapstoneHub {
     // Event Listeners
     setupEventListeners() {
         // Tab buttons for AI Technologies
-        document.querySelectorAll('.ai-categories .tab-btn').forEach(btn => {
+        document.querySelectorAll('.ai-categories .btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.ai-categories .tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.ai-categories .btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.filterAITechnologies(btn.getAttribute('data-category'));
             });
         });
 
         // Tab buttons for Research
-        document.querySelectorAll('.research-tabs .tab-btn').forEach(btn => {
+        document.querySelectorAll('.research-tabs .btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.research-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.research-tabs .btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.filterResearch(btn.getAttribute('data-type'));
             });

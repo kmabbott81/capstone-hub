@@ -6,6 +6,7 @@
     <title>Enhanced Capstone Hub - HL Stearns AI Strategy</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="banner-killer.css">
+    <link rel="stylesheet" href="css/theme.css?v=0.36.4">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -18,6 +19,9 @@
                     <i class="fas fa-graduation-cap"></i>
                     <span>Capstone Hub</span>
                 </div>
+                <button class="btn btn-ghost" data-action="toggle-theme" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
                 <div class="project-info">
                     <h4>HL Stearns AI Strategy</h4>
                     <p>Kyle Mabbott - OEMBA 2025</p>
@@ -27,39 +31,39 @@
             <div class="nav-menu">
                 <div class="nav-section">
                     <h5>Project Management</h5>
-                    <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <a href="#dashboard" class="nav-link active" data-section="dashboard">
                         <i class="fas fa-chart-line"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a href="#deliverables" class="nav-item" data-section="deliverables">
+                    <a href="#deliverables" class="nav-link" data-section="deliverables">
                         <i class="fas fa-tasks"></i>
                         <span>Deliverables Timeline</span>
                     </a>
                 </div>
-                
+
                 <div class="nav-section">
                     <h5>Business Analysis</h5>
-                    <a href="#processes" class="nav-item" data-section="processes">
+                    <a href="#processes" class="nav-link" data-section="processes">
                         <i class="fas fa-sitemap"></i>
                         <span>Business Processes</span>
                     </a>
-                    <a href="#ai-technologies" class="nav-item" data-section="ai-technologies">
+                    <a href="#ai-technologies" class="nav-link" data-section="ai-technologies">
                         <i class="fas fa-robot"></i>
                         <span>AI Technologies</span>
                     </a>
-                    <a href="#software-tools" class="nav-item" data-section="software-tools">
+                    <a href="#software-tools" class="nav-link" data-section="software-tools">
                         <i class="fas fa-tools"></i>
                         <span>Software & Tech Stack</span>
                     </a>
                 </div>
-                
+
                 <div class="nav-section">
                     <h5>Research & Data</h5>
-                    <a href="#research" class="nav-item" data-section="research">
+                    <a href="#research" class="nav-link" data-section="research">
                         <i class="fas fa-search"></i>
                         <span>Research Management</span>
                     </a>
-                    <a href="#integrations" class="nav-item" data-section="integrations">
+                    <a href="#integrations" class="nav-link" data-section="integrations">
                         <i class="fas fa-plug"></i>
                         <span>Integrations</span>
                     </a>
@@ -156,14 +160,14 @@
                 <div class="section-header">
                     <h1>Capstone Deliverables Timeline</h1>
                     <p>Complete course layout and milestone tracking</p>
-                    <button class="btn-primary admin-only" data-action="add-deliverable">
+                    <button class="btn btn-primary admin-only" data-action="add-deliverable">
                         <i class="fas fa-plus"></i> Add Deliverable
                     </button>
                 </div>
                 
                 <div class="timeline-container">
-                    <div class="timeline-filters">
-                        <select id="phase-filter">
+                    <div class="timeline-filters stack-16">
+                        <select id="phase-filter" class="input">
                             <option value="">All Phases</option>
                             <option value="Foundation">Foundation & Planning</option>
                             <option value="Research">Research & Analysis</option>
@@ -171,8 +175,8 @@
                             <option value="Evaluation">Evaluation & Testing</option>
                             <option value="Final">Final Report & Presentation</option>
                         </select>
-                        
-                        <select id="status-filter">
+
+                        <select id="status-filter" class="input">
                             <option value="">All Status</option>
                             <option value="Not Started">Not Started</option>
                             <option value="In Progress">In Progress</option>
@@ -193,19 +197,19 @@
                     <h1>Business Process Evaluation</h1>
                     <p>Comprehensive analysis of HL Stearns business processes</p>
                     <div class="header-actions">
-                        <button class="btn-primary admin-only" data-action="add-process">
+                        <button class="btn btn-primary admin-only" data-action="add-process">
                             <i class="fas fa-plus"></i> Add Process
                         </button>
-                        <button class="btn-secondary admin-only" data-action="edit-process-dropdowns">
+                        <button class="btn btn-outline admin-only" data-action="edit-process-dropdowns">
                             <i class="fas fa-cog"></i> Edit Dropdown Options
                         </button>
                     </div>
                 </div>
                 
                 <div class="processes-container">
-                    <div class="processes-filters">
-                        <input type="text" id="process-search" placeholder="Search processes...">
-                        <select id="department-filter">
+                    <div class="processes-filters stack-16">
+                        <input type="text" id="process-search" class="input" placeholder="Search processes...">
+                        <select id="department-filter" class="input">
                             <option value="">All Departments</option>
                             <option value="Sales">Sales</option>
                             <option value="Operations">Operations</option>
@@ -213,7 +217,7 @@
                             <option value="Finance">Finance</option>
                             <option value="IT">IT</option>
                         </select>
-                        <select id="automation-filter">
+                        <select id="automation-filter" class="input">
                             <option value="">Automation Potential</option>
                             <option value="High">High</option>
                             <option value="Medium">Medium</option>
@@ -232,7 +236,7 @@
                 <div class="section-header">
                     <h1>AI Technologies Catalog</h1>
                     <p>Comprehensive categorization of AI platforms and tools</p>
-                    <button class="btn-primary admin-only" data-action="add-ai-technology">
+                    <button class="btn btn-primary admin-only" data-action="add-ai-technology">
                         <i class="fas fa-plus"></i> Add AI Technology
                     </button>
                 </div>
@@ -240,13 +244,13 @@
                 <div class="ai-tech-container">
                     <div class="ai-categories">
                         <div class="category-tabs">
-                            <button class="tab-btn active" data-category="all">All Categories</button>
-                            <button class="tab-btn" data-category="Generative">Generative AI</button>
-                            <button class="tab-btn" data-category="Agentic">Agentic AI</button>
-                            <button class="tab-btn" data-category="Embedded">Embedded AI</button>
-                            <button class="tab-btn" data-category="Predictive">Predictive AI</button>
-                            <button class="tab-btn" data-category="Computer Vision">Computer Vision</button>
-                            <button class="tab-btn" data-category="NLP">Natural Language Processing</button>
+                            <button class="btn btn-ghost active" data-category="all">All Categories</button>
+                            <button class="btn btn-ghost" data-category="Generative">Generative AI</button>
+                            <button class="btn btn-ghost" data-category="Agentic">Agentic AI</button>
+                            <button class="btn btn-ghost" data-category="Embedded">Embedded AI</button>
+                            <button class="btn btn-ghost" data-category="Predictive">Predictive AI</button>
+                            <button class="btn btn-ghost" data-category="Computer Vision">Computer Vision</button>
+                            <button class="btn btn-ghost" data-category="NLP">Natural Language Processing</button>
                         </div>
                     </div>
                     
@@ -261,7 +265,7 @@
                 <div class="section-header">
                     <h1>Software & Tech Stack Manager</h1>
                     <p>Core and optional tools evaluation for HL Stearns</p>
-                    <button class="btn-primary admin-only" data-action="add-software-tool">
+                    <button class="btn btn-primary admin-only" data-action="add-software-tool">
                         <i class="fas fa-plus"></i> Add Software Tool
                     </button>
                 </div>
@@ -299,17 +303,17 @@
                 <div class="section-header">
                     <h1>Research Management Center</h1>
                     <p>Primary and secondary research with suggested questions and tracking</p>
-                    <button class="btn-primary admin-only" data-action="add-research-item">
+                    <button class="btn btn-primary admin-only" data-action="add-research-item">
                         <i class="fas fa-plus"></i> Add Research Item
                     </button>
                 </div>
                 
                 <div class="research-container">
                     <div class="research-tabs">
-                        <button class="tab-btn active" data-type="all">All Research</button>
-                        <button class="tab-btn" data-type="Primary">Primary Research</button>
-                        <button class="tab-btn" data-type="Secondary">Secondary Research</button>
-                        <button class="tab-btn" data-type="templates">Question Templates</button>
+                        <button class="btn btn-ghost active" data-type="all">All Research</button>
+                        <button class="btn btn-ghost" data-type="Primary">Primary Research</button>
+                        <button class="btn btn-ghost" data-type="Secondary">Secondary Research</button>
+                        <button class="btn btn-ghost" data-type="templates">Question Templates</button>
                     </div>
                     
                     <div class="research-content" id="research-content">
@@ -323,7 +327,7 @@
                 <div class="section-header">
                     <h1>Third-Party Integrations</h1>
                     <p>Notion, Microsoft, Google, and other platform connections</p>
-                    <button class="btn-primary admin-only" data-action="add-integration">
+                    <button class="btn btn-primary admin-only" data-action="add-integration">
                         <i class="fas fa-plus"></i> Add Integration
                     </button>
                 </div>
@@ -337,7 +341,7 @@
                                 <span class="status-badge connected">Connected</span>
                             </div>
                             <p>Research documentation and knowledge base</p>
-                            <button class="btn-secondary">Configure</button>
+                            <button class="btn btn-outline">Configure</button>
                         </div>
                         
                         <div class="platform-card microsoft">
@@ -347,7 +351,7 @@
                                 <span class="status-badge pending">Pending</span>
                             </div>
                             <p>Document storage and collaboration</p>
-                            <button class="btn-secondary">Setup</button>
+                            <button class="btn btn-outline">Setup</button>
                         </div>
                         
                         <div class="platform-card google">
@@ -357,7 +361,7 @@
                                 <span class="status-badge disconnected">Disconnected</span>
                             </div>
                             <p>Sheets, Docs, and Drive integration</p>
-                            <button class="btn-secondary">Connect</button>
+                            <button class="btn btn-outline">Connect</button>
                         </div>
                     </div>
                     
@@ -385,6 +389,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/theme-toggle.js?v=0.36.4" defer></script>
     <script src="auth-fixed.js?v=0.36.3.2"></script>
     <script src="app.js?v=0.36.3.2"></script>
 </body>

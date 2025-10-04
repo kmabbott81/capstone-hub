@@ -131,6 +131,10 @@ def set_security_headers(response):
     )
     return response
 
+@app.route('/__version__')
+def version():
+    return jsonify({"tag": "v0.36.4-ui-modern", "phase": "1d-modernization"})
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
