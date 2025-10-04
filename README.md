@@ -1,10 +1,11 @@
 # Capstone Hub
 
-![Version](https://img.shields.io/badge/version-v0.36.1--p1b--maint-blue)
+![Version](https://img.shields.io/badge/version-v0.36.4--ui--modern-blue)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Flask](https://img.shields.io/badge/flask-3.0%2B-green)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Security](https://img.shields.io/badge/security-Phase%201b%20Complete-brightgreen)
+![Security](https://img.shields.io/badge/security-Phase%201d%20Complete-brightgreen)
+![UI](https://img.shields.io/badge/UI-Modern%20Design%20System-purple)
 
 A secure, production-grade Flask application for managing capstone project deliverables, business processes, AI technologies, and research items.
 
@@ -12,7 +13,14 @@ A secure, production-grade Flask application for managing capstone project deliv
 
 ## Features
 
-### Security (Phase 1 & 1b Complete)
+### User Experience (Phase 1d Complete)
+- ✨ **Modern Design System** - CSS custom properties for colors, typography, spacing, shadows
+- ✨ **Dark Mode** - Auto-detection with manual toggle, persistent via localStorage
+- ✨ **Responsive Components** - Contemporary buttons, cards, inputs with focus rings
+- ✨ **Accessible UI** - WCAG 2.1 AA compliant, contrast ratio ≥ 4.5:1
+- ✨ **CSP-Compliant Styling** - Zero inline styles, all interactions delegated
+
+### Security (Phase 1a-1c Complete)
 - ✅ **Role-Based Access Control (RBAC)** - Admin and Viewer roles with distinct permissions
 - ✅ **Password Hashing** - PBKDF2-SHA256 via werkzeug.security
 - ✅ **Session Management** - 30-minute idle timeout with secure cookies
@@ -325,13 +333,15 @@ See [docs/OPS_CHECKLIST.md](docs/OPS_CHECKLIST.md) for complete troubleshooting 
 
 ## Version History
 
-- **v0.36.1-p1b-maint** (2025-10-04) - Maintenance patch: CI/CD, docs, header verification
-- **v0.36.1-sealed** (2025-10-04) - Phase 1b sealed with proofs and ops artifacts
-- **v0.36.1-phase1b** (2025-10-04) - Phase 1b pre-production hardening
-- **v0.36.0-audit-remediated** (2025-10-03) - External audit gap remediation
-- **v0.36.0** (2025-10-03) - Phase 1 Security implementation
+- **v0.36.4-ui-modern** (2025-01-04) - Phase 1d: Modern design system + dark mode, CSP-compliant
+- **v0.36.3-ui-delete-hotfix** (2025-01-04) - Hotfix: CSP-safe DELETE delegation with CSRF
+- **v0.36.3-exec-summary** (2025-01-03) - Executive summary and academic documentation
+- **v0.36.2-phase1c-telemetry** (2025-01-02) - Phase 1c: Privacy-safe telemetry
+- **v0.36.2-phase1c-governance** (2025-01-02) - Phase 1c: Data governance and privacy policy
+- **v0.36.1-sealed** (2024-12-30) - Phase 1b sealed with proofs and ops artifacts
+- **v0.36.0** (2024-12-28) - Phase 1a: Security foundation (CSP, CSRF, RBAC, rate limiting)
 
-See [CHANGELOG.md](CHANGELOG.md) for complete history.
+See [CHANGELOG.md](CHANGELOG.md) and [docs/DEPLOYMENT_HISTORY.md](docs/DEPLOYMENT_HISTORY.md) for complete history.
 
 ---
 
@@ -381,14 +391,16 @@ These policies ensure Capstone Hub meets academic and professional standards for
 
 Built for MBA Capstone Program at University of Oregon.
 
-**Security Audits:**
-- Phase 1 Security Audit (2025-10-03)
-- Phase 1b Pre-Production Hardening (2025-10-04)
+**Development Milestones:**
+- Phase 1a: Security Foundation (2024-12-28)
+- Phase 1b: Pre-Production Hardening (2024-12-30)
+- Phase 1c: Governance & Telemetry (2025-01-02)
+- Phase 1d: UI Modernization (2025-01-04)
 
 🤖 Developed with assistance from [Claude Code](https://claude.com/claude-code)
 
 ---
 
-**Last Updated**: 2025-10-04
-**Current Version**: v0.36.1-p1b-maint
-**Status**: Production-Ready for Academic Deployment
+**Last Updated**: 2025-01-04
+**Current Version**: v0.36.4-ui-modern
+**Status**: Production-Ready with Modern UI
