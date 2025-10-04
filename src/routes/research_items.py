@@ -15,7 +15,7 @@ def get_research_items():
 
 @research_items_bp.route('/api/research-items', methods=['POST'])
 @require_admin
-@csrf.protect
+@csrf.protect()
 def create_research_item():
     """Create a new research item"""
     data = request.get_json()
@@ -53,7 +53,7 @@ def create_research_item():
 
 @research_items_bp.route('/api/research-items/<int:item_id>', methods=['PUT'])
 @require_admin
-@csrf.protect
+@csrf.protect()
 def update_research_item(item_id):
     """Update an existing research item"""
     data = request.get_json()
@@ -90,7 +90,7 @@ def update_research_item(item_id):
 
 @research_items_bp.route('/api/research-items/<int:item_id>', methods=['DELETE'])
 @require_admin
-@csrf.protect
+@csrf.protect()
 def delete_research_item(item_id):
     """Delete a research item"""
     item = ResearchItem.query.get(item_id)

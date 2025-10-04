@@ -25,7 +25,7 @@ def get_software_tools():
 
 @software_tools_bp.route('/api/software-tools', methods=['POST'])
 @require_admin
-@csrf.protect
+@csrf.protect()
 def create_software_tool():
     """Create a new software tool"""
     data = request.get_json()
@@ -84,7 +84,7 @@ def create_software_tool():
 
 @software_tools_bp.route('/api/software-tools/<int:tool_id>', methods=['PUT'])
 @require_admin
-@csrf.protect
+@csrf.protect()
 def update_software_tool(tool_id):
     """Update an existing software tool"""
     data = request.get_json()
@@ -143,7 +143,7 @@ def update_software_tool(tool_id):
 
 @software_tools_bp.route('/api/software-tools/<int:tool_id>', methods=['DELETE'])
 @require_admin
-@csrf.protect
+@csrf.protect()
 def delete_software_tool(tool_id):
     """Delete a software tool"""
     tool = SoftwareTool.query.get(tool_id)

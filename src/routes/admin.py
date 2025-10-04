@@ -8,7 +8,7 @@ admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/api/admin/backup', methods=['POST'])
 @require_admin
-@csrf.protect
+@csrf.protect()
 def trigger_backup():
     """Manually trigger database backup"""
     try:

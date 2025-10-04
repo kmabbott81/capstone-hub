@@ -83,43 +83,43 @@ async def read_burst(session, n=100):
 async def main():
     cookies = aiohttp.CookieJar()
     async with aiohttp.ClientSession(cookie_jar=cookies) as session:
-        print("→ CSRF negative:", await csrf_negative(session))
+        print(">> CSRF negative:", await csrf_negative(session))
 
         if not ADMIN_PASSWORD:
             print("!! ADMIN_PASSWORD not set; skipping admin-only tests")
             return
 
-        # Wrong-password burst → expect 429 on last call
+        # Wrong-password burst - expect 429 on last call
         codes = await burst_login_rate_limit(session)
-        print("→ Login burst:", codes)
+        print(">> Login burst:", codes)
 
         # Login as admin
         ok = await login(session)
-        print("→ Admin login status:", ok)
+        print(">> Admin login status:", ok)
 
         token = await get_csrf(session)
 
         # Concurrency: create/update/delete 20 items in parallel
         created = await asyncio.gather(*[create_deliverable(session, token) for _ in range(20)])
         ids = [i for (code, i) in created if code in (200,201) and i]
-        print(f"→ Created: {len(ids)}")
+        print(f">> Created: {len(ids)}")
 
         upd = await asyncio.gather(*[update_deliverable(session, token, i) for i in ids])
-        print(f"→ Updated OK:", sum(1 for c in upd if c==200))
+        print(f">> Updated OK:", sum(1 for c in upd if c==200))
 
         # Backup under load
         rb = await read_burst(session, 50)
         bk = await do_backup(session, token)
-        print("→ Read burst 50 avg status:", sum(rb)/len(rb), " backup:", bk)
+        print(">> Read burst 50 avg status:", sum(rb)/len(rb), " backup:", bk)
 
         # Idle timeout via debug hook (staging only)
         if DEBUG_KEY:
             idle = await idle_timeout(session, token)
-            print("→ Idle-timeout write status (expect 401):", idle)
+            print(">> Idle-timeout write status (expect 401):", idle)
 
         # Cleanup
         dele = await asyncio.gather(*[delete_deliverable(session, token, i) for i in ids])
-        print("→ Deleted OK:", sum(1 for c in dele if c in (200,204)))
+        print(">> Deleted OK:", sum(1 for c in dele if c in (200,204)))
 
 if __name__ == "__main__":
     asyncio.run(main())
