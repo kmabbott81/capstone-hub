@@ -39,8 +39,10 @@ app.config['SESSION_COOKIE_SECURE'] = True  # HTTPS only
 app.config['SESSION_COOKIE_HTTPONLY'] = True  # No JS access
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
 app.config['WTF_CSRF_ENABLED'] = True
-app.config['WTF_CSRF_CHECK_DEFAULT'] = False  # Manual checking via decorator
+app.config['WTF_CSRF_CHECK_DEFAULT'] = True  # Automatic checking for all POST/PUT/DELETE
 app.config['WTF_CSRF_TIME_LIMIT'] = None  # No expiration
+app.config['WTF_CSRF_SSL_STRICT'] = True  # Require HTTPS for CSRF protection
+app.config['WTF_CSRF_METHODS'] = ['POST', 'PUT', 'PATCH', 'DELETE']  # Methods to protect
 CORS(app)
 
 # Initialize extensions

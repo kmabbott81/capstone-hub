@@ -15,7 +15,7 @@ def get_deliverables():
 
 @deliverables_bp.route('/api/deliverables', methods=['POST'])
 @require_admin
-@csrf.protect()
+
 def create_deliverable():
     """Create a new deliverable"""
     data = request.get_json()
@@ -59,7 +59,7 @@ def create_deliverable():
 
 @deliverables_bp.route('/api/deliverables/<int:deliverable_id>', methods=['PUT'])
 @require_admin
-@csrf.protect()
+
 def update_deliverable(deliverable_id):
     """Update an existing deliverable"""
     data = request.get_json()
@@ -93,7 +93,7 @@ def update_deliverable(deliverable_id):
 
 @deliverables_bp.route('/api/deliverables/<int:deliverable_id>', methods=['DELETE'])
 @require_admin
-@csrf.protect()
+
 def delete_deliverable(deliverable_id):
     """Delete a deliverable"""
     deliverable = Deliverable.query.get(deliverable_id)
