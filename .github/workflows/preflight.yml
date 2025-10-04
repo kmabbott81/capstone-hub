@@ -1,0 +1,261 @@
+name: Preflight Verification
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  smoke-test:
+    name: Smoke Test Suite
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/pip
+          ~\AppData\Local\pip\Cache
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run pytest suite
+      run: |
+        pytest -v --tb=short
+      continue-on-error: false
+
+    - name: Run security audit (pip-audit)
+      run: |
+        python -m pip_audit --skip-editable
+      continue-on-error: true
+
+    - name: Verify environment structure
+      run: |
+        python scripts/validate_env.py
+      continue-on-error: true
+
+    - name: Generate route manifest
+      run: |
+        python scripts/generate_route_manifest.py > security/endpoint_coverage/routes_manifest_ci.json
+      continue-on-error: true
+
+    - name: Verify critical files
+      shell: bash
+      run: |
+        echo "Checking critical files..."
+        files=(
+          "src/main.py"
+          "src/routes/auth.py"
+          "src/extensions.py"
+          "src/logging_config.py"
+          ".env.sample"
+          "requirements.txt"
+          "SECURITY.md"
+          "CHANGELOG.md"
+        )
+
+        missing=0
+        for file in "${files[@]}"; do
+          if [ -f "$file" ]; then
+            echo "[OK] $file"
+          else
+            echo "[MISSING] $file"
+            missing=$((missing + 1))
+          fi
+        done
+
+        if [ $missing -gt 0 ]; then
+          echo "[FAIL] $missing critical files missing"
+          exit 1
+        else
+          echo "[OK] All critical files present"
+        fi
+
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: |
+          security/endpoint_coverage/routes_manifest_ci.json
+          pytest-report.xml
+        retention-days: 7
+        if-no-files-found: ignore
+
+  build-verification:
+    name: Build Verification
+    runs-on: ubuntu-latest
+    needs: smoke-test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run complete build verification
+      run: |
+        bash scripts/verify_build.sh
+
+    - name: Verify security headers script exists
+      run: |
+        if [ -f scripts/verify_headers.py ]; then
+          echo "[OK] Header verification script present"
+        else
+          echo "[WARN] Header verification script missing"
+        fi
+
+    - name: Check documentation completeness
+      run: |
+        echo "Verifying documentation..."
+        docs=(
+          "README.md"
+          "SECURITY.md"
+          "DEPLOYMENT.md"
+          "CHANGELOG.md"
+          "docs/OPS_CHECKLIST.md"
+          "docs/CHANGE_CONTROL.md"
+        )
+
+        missing=0
+        for doc in "${docs[@]}"; do
+          if [ -f "$doc" ]; then
+            echo "[OK] $doc"
+          else
+            echo "[MISSING] $doc"
+            missing=$((missing + 1))
+          fi
+        done
+
+        if [ $missing -gt 0 ]; then
+          echo "[WARN] $missing documentation files missing"
+        else
+          echo "[OK] All documentation files present"
+        fi
+
+  security-check:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    needs: smoke-test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run pip-audit (security vulnerabilities)
+      run: |
+        python -m pip_audit --skip-editable --format json --output security_audit.json
+      continue-on-error: true
+
+    - name: Check for sensitive data in code
+      run: |
+        echo "Scanning for potential secrets..."
+
+        # Check for common patterns
+        if grep -r -i "password.*=.*['\"].*['\"]" src/ --include="*.py" | grep -v "ADMIN_PASSWORD" | grep -v "os.getenv\|os.environ"; then
+          echo "[WARN] Found hardcoded passwords"
+        else
+          echo "[OK] No hardcoded passwords found"
+        fi
+
+        if grep -r "SECRET_KEY.*=.*['\"]" src/ --include="*.py" | grep -v "os.getenv\|os.environ"; then
+          echo "[WARN] Found hardcoded SECRET_KEY"
+        else
+          echo "[OK] No hardcoded SECRET_KEY found"
+        fi
+
+    - name: Verify CSRF protection
+      run: |
+        echo "Checking CSRF protection..."
+        if grep -q "csrf.init_app" src/main.py; then
+          echo "[OK] CSRF initialized"
+        else
+          echo "[WARN] CSRF initialization not found"
+        fi
+
+    - name: Verify rate limiting
+      run: |
+        echo "Checking rate limiting..."
+        if grep -q "limiter.init_app" src/main.py; then
+          echo "[OK] Rate limiter initialized"
+        else
+          echo "[WARN] Rate limiter initialization not found"
+        fi
+
+    - name: Upload security audit
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-audit
+        path: security_audit.json
+        retention-days: 30
+        if-no-files-found: ignore
+
+  summary:
+    name: Verification Summary
+    runs-on: ubuntu-latest
+    needs: [smoke-test, build-verification, security-check]
+    if: always()
+
+    steps:
+    - name: Check job results
+      run: |
+        echo "==================================="
+        echo "Preflight Verification Summary"
+        echo "==================================="
+        echo ""
+        echo "Smoke Test: ${{ needs.smoke-test.result }}"
+        echo "Build Verification: ${{ needs.build-verification.result }}"
+        echo "Security Check: ${{ needs.security-check.result }}"
+        echo ""
+
+        if [ "${{ needs.smoke-test.result }}" != "success" ]; then
+          echo "[FAIL] Smoke tests failed"
+          exit 1
+        fi
+
+        if [ "${{ needs.build-verification.result }}" != "success" ]; then
+          echo "[FAIL] Build verification failed"
+          exit 1
+        fi
+
+        echo "[OK] All preflight checks passed"

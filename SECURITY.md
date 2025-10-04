@@ -63,7 +63,7 @@ We take security vulnerabilities seriously. If you discover a security issue, pl
 - Include steps to reproduce and potential impact assessment
 
 **For critical vulnerabilities (RCE, authentication bypass, data exposure):**
-- Email: [Your Security Contact Email]
+- Email: security@hlstearns.local
 - Subject: "SECURITY: [Brief Description]"
 - DO NOT create public GitHub issues for critical vulnerabilities
 

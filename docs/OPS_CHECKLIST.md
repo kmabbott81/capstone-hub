@@ -153,6 +153,84 @@ git tag -l "v*" | sort -V | tail -1
 git archive --format=tar.gz --prefix=capstone-hub/ v0.36.1 > capstone-hub-v0.36.1.tar.gz
 ```
 
+### 14-Day Backup Verification
+
+Regular verification ensures backups are current and recoverable.
+
+**Daily Backup Check (Automated):**
+```bash
+# Verify backup timestamp (should be within 24 hours)
+ls -lh backups/*.db | tail -5
+
+# Check backup age
+find backups/ -name "*.db" -mtime -1 | wc -l
+# Should return at least 1
+```
+
+**Weekly Backup Integrity Check:**
+```bash
+# Verify backup file is not corrupted
+sqlite3 backups/app.db.20251004_120000 "PRAGMA integrity_check;"
+# Expected output: ok
+
+# Check backup size (should not be 0)
+du -h backups/*.db | tail -5
+```
+
+**Automated Cleanup (14-Day Retention):**
+
+Create optional cleanup cron job:
+```bash
+# Add to crontab for daily cleanup at 2 AM
+# crontab -e
+0 2 * * * python /app/scripts/cleanup_backups.py --retain 14
+```
+
+**Railway Backup Cron:**
+```bash
+# Schedule via Railway cron (if available)
+railway cron add "0 2 * * *" "python scripts/cleanup_backups.py --retain 14"
+```
+
+**Manual Cleanup Command:**
+```bash
+# Clean backups older than 14 days
+python scripts/cleanup_backups.py --retain 14
+
+# Dry run to see what would be deleted
+python scripts/cleanup_backups.py --retain 14 --dry-run
+```
+
+**Backup Verification Report:**
+```bash
+# Generate backup status report
+echo "=== Backup Status Report ==="
+echo "Backup directory: backups/"
+echo "Total backups: $(ls -1 backups/*.db 2>/dev/null | wc -l)"
+echo "Latest backup: $(ls -t backups/*.db 2>/dev/null | head -1 | xargs basename)"
+echo "Latest timestamp: $(ls -t backups/*.db 2>/dev/null | head -1 | xargs stat -c %y 2>/dev/null || stat -f %Sm)"
+echo "Total size: $(du -sh backups/ 2>/dev/null | cut -f1)"
+echo ""
+echo "Backups older than 14 days:"
+find backups/ -name "*.db" -mtime +14 | wc -l
+```
+
+**Recovery Test Procedure (Monthly):**
+```bash
+# 1. Backup current database
+cp src/database/app.db src/database/app.db.current
+
+# 2. Restore from backup
+cp backups/app.db.20251004_120000 src/database/app.db.test
+
+# 3. Verify restored database
+sqlite3 src/database/app.db.test "SELECT COUNT(*) FROM deliverables;"
+
+# 4. Restore original
+mv src/database/app.db.current src/database/app.db
+rm src/database/app.db.test
+```
+
 ---
 
 ## Log Management

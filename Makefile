@@ -36,11 +36,17 @@ smoke: verify-build validate-env
 	@bash scripts/prove_rate_limit.sh || true
 	@echo ""
 	@echo "============================================"
+	@echo "Verifying Security Headers..."
+	@echo "============================================"
+	@python scripts/verify_headers.py || true
+	@echo ""
+	@echo "============================================"
 	@echo "Smoke Test Complete"
 	@echo "============================================"
 	@echo "Review proof artifacts:"
 	@echo "  - security/build_snapshot/admin_guard_proof.txt"
 	@echo "  - security/build_snapshot/rate_limit_proof.txt"
+	@echo "  - security/build_snapshot/headers_verify.txt"
 	@echo "  - security/endpoint_coverage/routes_manifest.json"
 
 # Build verification
