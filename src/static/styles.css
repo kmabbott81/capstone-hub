@@ -1003,12 +1003,6 @@ body.role-viewer .main-content {
     margin-top: 3rem;
 }
 
-/* Enhanced button states for viewers */
-body.role-viewer .btn-primary:not(.export-btn) {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-}
 
 body.role-viewer .add-btn,
 body.role-viewer .edit-btn,
@@ -1016,3 +1010,146 @@ body.role-viewer .delete-btn {
     display: none !important;
 }
 
+
+/* Business Process Cards */
+.process-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.process-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.process-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.process-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #2c3e50;
+}
+
+.process-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: #3498db;
+    color: white;
+}
+
+.process-body {
+    margin-bottom: 15px;
+}
+
+.process-field {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.process-field strong {
+    color: #34495e;
+    display: inline-block;
+    min-width: 140px;
+}
+
+.process-footer {
+    display: flex;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+/* Additional Card Styles for All Sections */
+.deliverable-card, .tech-card, .research-card, .integration-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.deliverable-card:hover, .tech-card:hover, .research-card:hover, .integration-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.deliverable-header, .tech-header, .research-header, .integration-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.deliverable-header h3, .tech-header h3, .research-header h3, .integration-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #2c3e50;
+}
+
+.status-badge, .tech-badge, .research-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: #3498db;
+    color: white;
+}
+
+.status-not-started { background: #95a5a6; }
+.status-in-progress { background: #f39c12; }
+.status-completed { background: #27ae60; }
+.status-active { background: #27ae60; }
+.status-inactive { background: #95a5a6; }
+
+.deliverable-body, .tech-body, .research-body, .integration-body {
+    margin-bottom: 15px;
+}
+
+.field {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.field strong {
+    color: #34495e;
+    display: inline-block;
+    min-width: 120px;
+}
+
+.deliverable-footer, .tech-footer, .research-footer, .integration-footer {
+    display: flex;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+}

@@ -165,7 +165,7 @@
                 <div class="section-header">
                     <h1>Capstone Deliverables Timeline</h1>
                     <p>Complete course layout and milestone tracking</p>
-                    <button class="btn-primary" onclick="addDeliverable()">
+                    <button class="btn-primary admin-only" data-action="add-deliverable">
                         <i class="fas fa-plus"></i> Add Deliverable
                     </button>
                 </div>
@@ -202,7 +202,7 @@
                     <h1>Business Process Evaluation</h1>
                     <p>Comprehensive analysis of HL Stearns business processes</p>
                     <div class="header-actions">
-                        <button class="btn-primary" onclick="addProcess()">
+                        <button class="btn-primary admin-only" data-action="add-process">
                             <i class="fas fa-plus"></i> Add Process
                         </button>
                         <button class="btn-secondary admin-only" onclick="editProcessDropdowns()">
@@ -241,7 +241,7 @@
                 <div class="section-header">
                     <h1>AI Technologies Catalog</h1>
                     <p>Comprehensive categorization of AI platforms and tools</p>
-                    <button class="btn-primary" onclick="addAITechnology()">
+                    <button class="btn-primary admin-only" data-action="add-ai-technology">
                         <i class="fas fa-plus"></i> Add AI Technology
                     </button>
                 </div>
@@ -270,7 +270,7 @@
                 <div class="section-header">
                     <h1>Software & Tech Stack Manager</h1>
                     <p>Core and optional tools evaluation for HL Stearns</p>
-                    <button class="btn-primary" onclick="addSoftwareTool()">
+                    <button class="btn-primary admin-only" data-action="add-software-tool">
                         <i class="fas fa-plus"></i> Add Software Tool
                     </button>
                 </div>
@@ -308,7 +308,7 @@
                 <div class="section-header">
                     <h1>Research Management Center</h1>
                     <p>Primary and secondary research with suggested questions and tracking</p>
-                    <button class="btn-primary" onclick="addResearchItem()">
+                    <button class="btn-primary admin-only" data-action="add-research-item">
                         <i class="fas fa-plus"></i> Add Research Item
                     </button>
                 </div>
@@ -332,7 +332,7 @@
                 <div class="section-header">
                     <h1>Third-Party Integrations</h1>
                     <p>Notion, Microsoft, Google, and other platform connections</p>
-                    <button class="btn-primary" onclick="addIntegration()">
+                    <button class="btn-primary admin-only" data-action="add-integration">
                         <i class="fas fa-plus"></i> Add Integration
                     </button>
                 </div>
@@ -383,7 +383,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modal-title">Add Item</h3>
-                <button class="modal-close" onclick="closeModal()">
+                <button class="modal-close" data-action="close-modal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>

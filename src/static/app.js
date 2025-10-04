@@ -1,5 +1,16 @@
 // Enhanced Capstone Hub - JavaScript Application Logic
 
+// XSS Safety Helper - Escape user-generated content
+const escapeHTML = (str) => {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+};
+
 class CapstoneHub {
     constructor() {
         this.currentSection = 'dashboard';
@@ -274,8 +285,29 @@ class CapstoneHub {
             this.showEmptyState('deliverables-timeline', 'tasks', 'No deliverables yet', 'Add your first deliverable to get started with timeline tracking');
             return;
         }
-        // Render deliverables timeline here
-        container.innerHTML = '<div class="loading">Loading deliverables...</div>';
+        container.innerHTML = this.data.deliverables.map(item => {
+            const title = escapeHTML(item.title || 'Untitled');
+            const desc = escapeHTML(item.description || '');
+            const dueDate = escapeHTML(item.due_date || 'No date');
+            const phase = escapeHTML(item.phase || 'Unassigned');
+            const status = escapeHTML(item.status || 'Not started');
+
+            let card = '<div class="deliverable-card">';
+            card += '<div class="deliverable-header">';
+            card += '<h3>' + title + '</h3>';
+            card += '<span class="status-badge status-' + status.toLowerCase().replace(/\s+/g, '-') + '">' + status + '</span>';
+            card += '</div>';
+            card += '<div class="deliverable-body">';
+            card += '<div class="field"><strong>Phase:</strong> ' + phase + '</div>';
+            card += '<div class="field"><strong>Due Date:</strong> ' + dueDate + '</div>';
+            if (desc) card += '<div class="field"><strong>Description:</strong> ' + desc + '</div>';
+            card += '</div>';
+            card += '<div class="deliverable-footer admin-only">';
+            card += '<button class="btn-secondary btn-sm" data-action="edit-deliverable" data-id="' + item.id + '"><i class="fas fa-edit"></i> Edit</button>';
+            card += '<button class="btn-danger btn-sm" data-action="delete-deliverable" data-id="' + item.id + '"><i class="fas fa-trash"></i> Delete</button>';
+            card += '</div></div>';
+            return card;
+        }).join('');
     }
 
     renderProcesses() {
@@ -284,8 +316,37 @@ class CapstoneHub {
             this.showEmptyState('processes-grid', 'sitemap', 'No business processes yet', 'Add your first process to begin evaluation and optimization');
             return;
         }
-        // Render processes grid here
-        container.innerHTML = '<div class="loading">Loading processes...</div>';
+        
+        container.innerHTML = this.data.processes.map(process => {
+            const name = escapeHTML(process.name || 'Untitled Process');
+            const dept = escapeHTML(process.department || 'Not specified');
+            const automation = escapeHTML(process.automation_potential || 'Not Set');
+            const desc = escapeHTML(process.description || 'No description provided');
+            const currentState = escapeHTML(process.current_state || 'Not documented');
+            const painPoints = escapeHTML(process.pain_points || '');
+            const aiRec = escapeHTML(process.ai_recommendations || '');
+            const priority = escapeHTML(process.priority_score || '');
+            
+            let card = '<div class="process-card">';
+            card += '<div class="process-header">';
+            card += '<h3>' + name + '</h3>';
+            card += '<span class="process-badge">' + automation + '</span>';
+            card += '</div>';
+            card += '<div class="process-body">';
+            card += '<div class="process-field"><strong>Department:</strong> ' + dept + '</div>';
+            card += '<div class="process-field"><strong>Description:</strong> ' + desc + '</div>';
+            card += '<div class="process-field"><strong>Current State:</strong> ' + currentState + '</div>';
+            if (painPoints) card += '<div class="process-field"><strong>Pain Points:</strong> ' + painPoints + '</div>';
+            if (aiRec) card += '<div class="process-field"><strong>AI Recommendations:</strong> ' + aiRec + '</div>';
+            if (priority) card += '<div class="process-field"><strong>Priority Score:</strong> ' + priority + '/10</div>';
+            card += '</div>';
+            card += '<div class="process-footer admin-only">';
+            card += '<button class="btn-secondary btn-sm" data-action="edit-process" data-id="' + process.id + '"><i class="fas fa-edit"></i> Edit</button>';
+            card += '<button class="btn-danger btn-sm" data-action="delete-process" data-id="' + process.id + '"><i class="fas fa-trash"></i> Delete</button>';
+            card += '</div>';
+            card += '</div>';
+            return card;
+        }).join('');
     }
 
     renderAITechnologies() {
@@ -294,8 +355,29 @@ class CapstoneHub {
             this.showEmptyState('ai-tech-grid', 'robot', 'No AI technologies yet', 'Add your first AI technology to start building your comprehensive catalog');
             return;
         }
-        // Render AI technologies grid here
-        container.innerHTML = '<div class="loading">Loading AI technologies...</div>';
+        container.innerHTML = this.data.aiTechnologies.map(tech => {
+            const name = escapeHTML(tech.name || 'Untitled');
+            const category = escapeHTML(tech.category || 'Uncategorized');
+            const desc = escapeHTML(tech.description || 'No description');
+            const useCase = escapeHTML(tech.use_case || '');
+            const maturity = escapeHTML(tech.maturity_level || 'Unknown');
+
+            let card = '<div class="tech-card">';
+            card += '<div class="tech-header">';
+            card += '<h3>' + name + '</h3>';
+            card += '<span class="tech-badge">' + category + '</span>';
+            card += '</div>';
+            card += '<div class="tech-body">';
+            card += '<div class="field"><strong>Maturity:</strong> ' + maturity + '</div>';
+            card += '<div class="field"><strong>Description:</strong> ' + desc + '</div>';
+            if (useCase) card += '<div class="field"><strong>Use Case:</strong> ' + useCase + '</div>';
+            card += '</div>';
+            card += '<div class="tech-footer admin-only">';
+            card += '<button class="btn-secondary btn-sm" data-action="edit-ai-technology" data-id="' + tech.id + '"><i class="fas fa-edit"></i> Edit</button>';
+            card += '<button class="btn-danger btn-sm" data-action="delete-ai-technology" data-id="' + tech.id + '"><i class="fas fa-trash"></i> Delete</button>';
+            card += '</div></div>';
+            return card;
+        }).join('');
     }
 
     renderSoftwareTools() {
@@ -326,8 +408,32 @@ class CapstoneHub {
             this.showEmptyState('research-content', 'search', 'No research items yet', 'Add your first research item to begin comprehensive documentation and tracking');
             return;
         }
-        // Render research items here
-        container.innerHTML = '<div class="loading">Loading research items...</div>';
+
+        container.innerHTML = this.data.researchItems.map(item => {
+            const title = escapeHTML(item.title || 'Untitled');
+            const type = escapeHTML(item.research_type || 'General');
+            const method = escapeHTML(item.research_method || 'Not specified');
+            const desc = escapeHTML(item.description || 'No description');
+            const source = escapeHTML(item.source || '');
+            const findings = escapeHTML(item.key_findings || '');
+
+            let card = '<div class="research-card">';
+            card += '<div class="research-header">';
+            card += '<h3>' + title + '</h3>';
+            card += '<span class="research-badge">' + type + '</span>';
+            card += '</div>';
+            card += '<div class="research-body">';
+            card += '<div class="field"><strong>Method:</strong> ' + method + '</div>';
+            card += '<div class="field"><strong>Description:</strong> ' + desc + '</div>';
+            if (source) card += '<div class="field"><strong>Source:</strong> ' + source + '</div>';
+            if (findings) card += '<div class="field"><strong>Key Findings:</strong> ' + findings + '</div>';
+            card += '</div>';
+            card += '<div class="research-footer admin-only">';
+            card += '<button class="btn-secondary btn-sm" data-action="edit-research-item" data-id="' + item.id + '"><i class="fas fa-edit"></i> Edit</button>';
+            card += '<button class="btn-danger btn-sm" data-action="delete-research-item" data-id="' + item.id + '"><i class="fas fa-trash"></i> Delete</button>';
+            card += '</div></div>';
+            return card;
+        }).join('');
     }
 
     renderIntegrations() {
@@ -336,8 +442,29 @@ class CapstoneHub {
             this.showEmptyState('integration-logs', 'plug', 'No integration activity yet', 'Configure your first integration to see activity logs');
             return;
         }
-        // Render integration logs here
-        container.innerHTML = '<div class="loading">Loading integration logs...</div>';
+        container.innerHTML = this.data.integrations.map(item => {
+            const name = escapeHTML(item.name || 'Untitled Integration');
+            const type = escapeHTML(item.integration_type || 'Unknown');
+            const status = escapeHTML(item.status || 'Inactive');
+            const desc = escapeHTML(item.description || 'No description');
+            const endpoint = escapeHTML(item.api_endpoint || '');
+
+            let card = '<div class="integration-card">';
+            card += '<div class="integration-header">';
+            card += '<h3>' + name + '</h3>';
+            card += '<span class="status-badge status-' + status.toLowerCase() + '">' + status + '</span>';
+            card += '</div>';
+            card += '<div class="integration-body">';
+            card += '<div class="field"><strong>Type:</strong> ' + type + '</div>';
+            card += '<div class="field"><strong>Description:</strong> ' + desc + '</div>';
+            if (endpoint) card += '<div class="field"><strong>Endpoint:</strong> ' + endpoint + '</div>';
+            card += '</div>';
+            card += '<div class="integration-footer admin-only">';
+            card += '<button class="btn-secondary btn-sm" data-action="edit-integration" data-id="' + item.id + '"><i class="fas fa-edit"></i> Edit</button>';
+            card += '<button class="btn-danger btn-sm" data-action="delete-integration" data-id="' + item.id + '"><i class="fas fa-trash"></i> Delete</button>';
+            card += '</div></div>';
+            return card;
+        }).join('');
     }
 
     // Filtering Methods
@@ -952,6 +1079,42 @@ function closeModal() {
 let capstoneHub;
 document.addEventListener('DOMContentLoaded', () => {
     capstoneHub = new CapstoneHub();
+
+    // Event delegation for all action buttons (removes need for inline onclick)
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+
+        const action = btn.dataset.action;
+        const id = btn.dataset.id ? parseInt(btn.dataset.id) : null;
+
+        // Add actions
+        if (action === 'add-deliverable') return capstoneHub.addDeliverable();
+        if (action === 'add-process') return capstoneHub.addProcess();
+        if (action === 'add-ai-technology') return capstoneHub.addAITechnology();
+        if (action === 'add-software-tool') return capstoneHub.addSoftwareTool();
+        if (action === 'add-research-item') return capstoneHub.addResearchItem();
+        if (action === 'add-integration') return capstoneHub.addIntegration();
+
+        // Edit actions
+        if (action === 'edit-deliverable' && id) return capstoneHub.editDeliverable(id);
+        if (action === 'edit-process' && id) return capstoneHub.editProcess(id);
+        if (action === 'edit-ai-technology' && id) return capstoneHub.editAITechnology(id);
+        if (action === 'edit-software-tool' && id) return capstoneHub.editSoftwareTool(id);
+        if (action === 'edit-research-item' && id) return capstoneHub.editResearchItem(id);
+        if (action === 'edit-integration' && id) return capstoneHub.editIntegration(id);
+
+        // Delete actions
+        if (action === 'delete-deliverable' && id) return capstoneHub.deleteDeliverable(id);
+        if (action === 'delete-process' && id) return capstoneHub.deleteProcess(id);
+        if (action === 'delete-ai-technology' && id) return capstoneHub.deleteAITechnology(id);
+        if (action === 'delete-software-tool' && id) return capstoneHub.deleteSoftwareTool(id);
+        if (action === 'delete-research-item' && id) return capstoneHub.deleteResearchItem(id);
+        if (action === 'delete-integration' && id) return capstoneHub.deleteIntegration(id);
+
+        // Modal close
+        if (action === 'close-modal') return capstoneHub.closeModal();
+    });
 
     // Override the addProcess function to use dynamic options (must run after capstoneHub is initialized)
     const originalAddProcess = capstoneHub.addProcess;

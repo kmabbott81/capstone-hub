@@ -16,7 +16,11 @@ class AuthManager {
     }
 
     getUserRole() {
-        return localStorage.getItem('userRole') || 'viewer';
+        const saved = localStorage.getItem('userRole');
+        if (saved) return saved;
+        // Auto-admin on localhost, viewer on production
+        const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+        return isLocal ? 'admin' : 'viewer';
     }
 
     setUserRole(role) {
@@ -99,4 +103,3 @@ let authManager;
 document.addEventListener('DOMContentLoaded', function() {
     authManager = new AuthManager();
 });
-

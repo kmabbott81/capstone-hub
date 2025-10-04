@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from src.models.deliverable import Deliverable
 from src.models.database import db
+from src.routes.auth import require_admin
 
 deliverables_bp = Blueprint('deliverables', __name__)
 
@@ -12,6 +13,7 @@ def get_deliverables():
     return jsonify([d.to_dict() for d in deliverables])
 
 @deliverables_bp.route('/api/deliverables', methods=['POST'])
+@require_admin
 def create_deliverable():
     """Create a new deliverable"""
     data = request.get_json()
@@ -54,6 +56,7 @@ def create_deliverable():
         return jsonify({'error': str(e)}), 500
 
 @deliverables_bp.route('/api/deliverables/<int:deliverable_id>', methods=['PUT'])
+@require_admin
 def update_deliverable(deliverable_id):
     """Update an existing deliverable"""
     data = request.get_json()
@@ -86,6 +89,7 @@ def update_deliverable(deliverable_id):
         return jsonify({'error': str(e)}), 500
 
 @deliverables_bp.route('/api/deliverables/<int:deliverable_id>', methods=['DELETE'])
+@require_admin
 def delete_deliverable(deliverable_id):
     """Delete a deliverable"""
     deliverable = Deliverable.query.get(deliverable_id)

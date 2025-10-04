@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from src.models.database import db
 
+from src.routes.auth import require_admin
 integrations_bp = Blueprint('integrations', __name__)
 
 @integrations_bp.route('/api/integrations', methods=['GET'])
@@ -20,6 +21,7 @@ def get_integrations():
     } for integration in integrations])
 
 @integrations_bp.route('/api/integrations', methods=['POST'])
+@require_admin
 def create_integration():
     """Create a new integration"""
     data = request.get_json()
@@ -57,6 +59,7 @@ def create_integration():
         return jsonify({'error': str(e)}), 400
 
 @integrations_bp.route('/api/integrations/<int:integration_id>', methods=['PUT'])
+@require_admin
 def update_integration(integration_id):
     """Update an existing integration"""
     data = request.get_json()
@@ -100,6 +103,7 @@ def update_integration(integration_id):
     return jsonify({'error': 'Integration not found'}), 404
 
 @integrations_bp.route('/api/integrations/<int:integration_id>', methods=['DELETE'])
+@require_admin
 def delete_integration(integration_id):
     """Delete an integration"""
     global integrations_data

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from src.models.business_process import BusinessProcess
 from src.models.database import db
+from src.routes.auth import require_admin
 
 business_processes_bp = Blueprint('business_processes', __name__)
 
@@ -12,6 +13,7 @@ def get_business_processes():
     return jsonify([p.to_dict() for p in processes])
 
 @business_processes_bp.route('/api/business-processes', methods=['POST'])
+@require_admin
 def create_business_process():
     """Create a new business process"""
     data = request.get_json()
@@ -45,6 +47,7 @@ def create_business_process():
         return jsonify({'error': str(e)}), 500
 
 @business_processes_bp.route('/api/business-processes/<int:process_id>', methods=['PUT'])
+@require_admin
 def update_business_process(process_id):
     """Update an existing business process"""
     data = request.get_json()
@@ -69,6 +72,7 @@ def update_business_process(process_id):
         return jsonify({'error': str(e)}), 500
 
 @business_processes_bp.route('/api/business-processes/<int:process_id>', methods=['DELETE'])
+@require_admin
 def delete_business_process(process_id):
     """Delete a business process"""
     process = BusinessProcess.query.get(process_id)

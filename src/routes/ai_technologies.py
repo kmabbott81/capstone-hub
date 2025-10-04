@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from src.models.ai_technology import AITechnology
 from src.models.database import db
+from src.routes.auth import require_admin
 
 ai_technologies_bp = Blueprint('ai_technologies', __name__)
 
@@ -12,6 +13,7 @@ def get_ai_technologies():
     return jsonify([tech.to_dict() for tech in technologies])
 
 @ai_technologies_bp.route('/api/ai-technologies', methods=['POST'])
+@require_admin
 def create_ai_technology():
     """Create a new AI technology"""
     data = request.get_json()
@@ -53,6 +55,7 @@ def create_ai_technology():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@require_admin
 @ai_technologies_bp.route('/api/ai-technologies/<int:tech_id>', methods=['PUT'])
 def update_ai_technology(tech_id):
     """Update an existing AI technology"""
@@ -85,6 +88,7 @@ def update_ai_technology(tech_id):
     
     return jsonify({'error': 'AI technology not found'}), 404
 
+@require_admin
 @ai_technologies_bp.route('/api/ai-technologies/<int:tech_id>', methods=['DELETE'])
 def delete_ai_technology(tech_id):
     """Delete an AI technology"""

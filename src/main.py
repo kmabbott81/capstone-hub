@@ -24,9 +24,12 @@ from src.routes.auth import auth_bp
 from flask_cors import CORS
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
-app.config['SECRET_KEY'] = 'HL_Stearns_Capstone_2025_Secure_Key_#$%'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'HL_Stearns_Capstone_2025_Secure_Key_#$%')
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_COOKIE_SECURE'] = True  # HTTPS only
+app.config['SESSION_COOKIE_HTTPONLY'] = True  # No JS access
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
 CORS(app)
 
 app.register_blueprint(user_bp)
@@ -45,6 +48,25 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 with app.app_context():
     db.create_all()
+
+# Security headers middleware
+@app.after_request
+def set_security_headers(response):
+    response.headers['X-Robots-Tag'] = 'noindex, nofollow'
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    # CSP: Allow unsafe-inline for styles (Bootstrap), strict script-src
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; "
+        "img-src 'self' data: https:; "
+        "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
+        "script-src 'self' https://cdnjs.cloudflare.com; "
+        "font-src 'self' data: https://cdnjs.cloudflare.com; "
+        "connect-src 'self'"
+    )
+    return response
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
