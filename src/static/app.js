@@ -18,7 +18,7 @@ async function getCSRFToken() {
     if (csrfToken) return csrfToken;
 
     try {
-        const response = await fetch('/api/csrf-token');
+        const response = await fetch('/api/csrf-token', { credentials: 'same-origin' });
         const data = await response.json();
         csrfToken = data.csrf_token;
         return csrfToken;
@@ -726,7 +726,8 @@ class CapstoneHub {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': token
-                }
+                },
+                credentials: 'same-origin'
             });
 
             if (response.ok) {
@@ -855,7 +856,8 @@ class CapstoneHub {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': token
-                }
+                },
+                credentials: 'same-origin'
             });
 
             if (response.ok) {
@@ -890,7 +892,8 @@ class CapstoneHub {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': token
-                }
+                },
+                credentials: 'same-origin'
             });
 
             if (response.ok) {
@@ -925,7 +928,8 @@ class CapstoneHub {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': token
-                }
+                },
+                credentials: 'same-origin'
             });
 
             if (response.ok) {
@@ -960,7 +964,8 @@ class CapstoneHub {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': token
-                }
+                },
+                credentials: 'same-origin'
             });
 
             if (response.ok) {
@@ -995,7 +1000,8 @@ class CapstoneHub {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': token
-                }
+                },
+                credentials: 'same-origin'
             });
 
             if (response.ok) {
@@ -1445,6 +1451,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Modal close
         if (action === 'close-modal') return capstoneHub.closeModal();
+
+        // Dropdown option management
+        if (action === 'add-option') {
+            const optionType = target.getAttribute('data-option-type');
+            if (optionType) return addOption(optionType);
+        }
+        if (action === 'remove-option') {
+            const optionType = target.getAttribute('data-option-type');
+            const optionIndex = parseInt(target.getAttribute('data-option-index'), 10);
+            if (optionType && !isNaN(optionIndex)) return removeOption(optionType, optionIndex);
+        }
+        if (action === 'reset-dropdown-options') return resetDropdownOptions();
     });
 
     // Override the addProcess function to use dynamic options (must run after capstoneHub is initialized)
@@ -1625,13 +1643,13 @@ function editProcessDropdowns() {
                     ${options.departments.map((dept, index) => `
                         <div class="option-item">
                             <input type="text" value="${dept}" class="form-control" data-type="department" data-index="${index}">
-                            <button type="button" class="btn-danger-sm" onclick="removeOption('department', ${index})">
+                            <button type="button" class="btn-danger-sm" data-action="remove-option" data-option-type="department" data-option-index="${index}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     `).join('')}
                 </div>
-                <button type="button" class="btn-secondary-sm" onclick="addOption('department')">
+                <button type="button" class="btn-secondary-sm" data-action="add-option" data-option-type="department">
                     <i class="fas fa-plus"></i> Add Department
                 </button>
             </div>
@@ -1642,20 +1660,20 @@ function editProcessDropdowns() {
                     ${options.automationPotential.map((auto, index) => `
                         <div class="option-item">
                             <input type="text" value="${auto}" class="form-control" data-type="automation" data-index="${index}">
-                            <button type="button" class="btn-danger-sm" onclick="removeOption('automation', ${index})">
+                            <button type="button" class="btn-danger-sm" data-action="remove-option" data-option-type="automation" data-option-index="${index}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     `).join('')}
                 </div>
-                <button type="button" class="btn-secondary-sm" onclick="addOption('automation')">
+                <button type="button" class="btn-secondary-sm" data-action="add-option" data-option-type="automation">
                     <i class="fas fa-plus"></i> Add Option
                 </button>
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-secondary" onclick="capstoneHub.closeModal()">Cancel</button>
-                <button type="button" class="btn-secondary" onclick="resetDropdownOptions()">Reset to Defaults</button>
+                <button type="button" class="btn-secondary" data-action="close-modal">Cancel</button>
+                <button type="button" class="btn-secondary" data-action="reset-dropdown-options">Reset to Defaults</button>
                 <button type="submit" class="btn-primary">Save Changes</button>
             </div>
         </form>
@@ -1724,7 +1742,7 @@ function addOption(type) {
     newItem.className = 'option-item';
     newItem.innerHTML = `
         <input type="text" value="" class="form-control" data-type="${type}" data-index="${currentCount}" placeholder="Enter new ${type === 'department' ? 'department' : 'option'}">
-        <button type="button" class="btn-danger-sm" onclick="removeOption('${type}', ${currentCount})">
+        <button type="button" class="btn-danger-sm" data-action="remove-option" data-option-type="${type}" data-option-index="${currentCount}">
             <i class="fas fa-trash"></i>
         </button>
     `;
