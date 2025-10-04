@@ -1,11 +1,12 @@
 # Capstone Hub
 
-![Version](https://img.shields.io/badge/version-v0.36.4--ui--modern-blue)
+![Version](https://img.shields.io/badge/version-v0.37.0--phase3--automation-blue)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Flask](https://img.shields.io/badge/flask-3.0%2B-green)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Security](https://img.shields.io/badge/security-Phase%201d%20Complete-brightgreen)
+![Security](https://img.shields.io/badge/security-Phase%203%20Complete-brightgreen)
 ![UI](https://img.shields.io/badge/UI-Modern%20Design%20System-purple)
+![Automation](https://img.shields.io/badge/automation-Self--Driving%20Fortress-orange)
 
 <!-- Quality Gate Badges (will be live when GitHub Actions TPA is deployed) -->
 ![TPA Visual](https://img.shields.io/github/actions/workflow/status/kmabbott81/capstone-hub/tpa.yml?branch=master&label=visual%20regression&logo=playwright)
@@ -46,12 +47,16 @@ A secure, production-grade Flask application for managing capstone project deliv
 - **Research Items** - Organize research findings and references
 - **Advanced Analytics** - Generate reports and visualizations (coming soon)
 
-### Operations
-- **Automated Testing** - Pytest test suite with CI/CD integration
-- **Build Verification** - Pre-deployment smoke tests and security audits
-- **Environment Validation** - Automated environment variable checking
-- **Rotating Logs** - 10MB × 5 backups with automatic rotation
-- **Backup System** - Automated database backups with 14-day retention
+### Operations & Automation (Phase 3)
+- **Total Product Audit (TPA)** - Autonomous quality loop with GitHub Actions
+- **Visual Regression** - Playwright snapshot testing with 0.1% tolerance
+- **Accessibility** - WCAG 2.1 AA validation with axe-core
+- **Security Audit** - Automated pip-audit + secrets scanning
+- **E2E Testing** - Critical user flow validation
+- **Quality Gates** - Blocking violations prevent PR merge
+- **Health Dashboard** - Public `/status` page with real-time metrics
+- **Makefile Targets** - `make tpa`, `make tpa-visual`, `make tpa-a11y`
+- **ROI** - 93% time savings (160 min → 12 min per cycle)
 
 ---
 
@@ -142,6 +147,13 @@ See [.env.sample](.env.sample) for complete documentation.
 ```bash
 # Complete smoke test suite
 make smoke
+
+# Total Product Audit (TPA)
+make tpa            # Run full TPA suite (visual + a11y + security + e2e)
+make tpa-visual     # Visual regression tests only
+make tpa-a11y       # Accessibility tests only
+make tpa-security   # Security audit only
+make tpa-e2e        # End-to-end tests only
 
 # Or individual components
 make verify-build    # Tests + security audit + manifest
@@ -341,6 +353,8 @@ See [docs/OPS_CHECKLIST.md](docs/OPS_CHECKLIST.md) for complete troubleshooting 
 
 ## Version History
 
+- **v0.37.0-phase3-automation** (2025-01-04) - Phase 3: TPA automation with GitHub Actions
+- **v0.36.5-phase2-transparency** (2025-01-04) - Phase 2: Public status dashboard + TPA history
 - **v0.36.4-ui-modern** (2025-01-04) - Phase 1d: Modern design system + dark mode, CSP-compliant
 - **v0.36.3-ui-delete-hotfix** (2025-01-04) - Hotfix: CSP-safe DELETE delegation with CSRF
 - **v0.36.3-exec-summary** (2025-01-03) - Executive summary and academic documentation
@@ -404,11 +418,13 @@ Built for MBA Capstone Program at University of Oregon.
 - Phase 1b: Pre-Production Hardening (2024-12-30)
 - Phase 1c: Governance & Telemetry (2025-01-02)
 - Phase 1d: UI Modernization (2025-01-04)
+- Phase 2: Public Transparency (2025-01-04)
+- Phase 3: TPA Automation (2025-01-04)
 
 🤖 Developed with assistance from [Claude Code](https://claude.com/claude-code)
 
 ---
 
 **Last Updated**: 2025-01-04
-**Current Version**: v0.36.4-ui-modern
-**Status**: Production-Ready with Modern UI
+**Current Version**: v0.37.0-phase3-automation
+**Status**: Production-Ready with Autonomous Quality Loop
