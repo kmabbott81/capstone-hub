@@ -1,0 +1,347 @@
+name: Total Product Audit (TPA)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/ms-playwright
+
+jobs:
+  visual-regression:
+    name: Visual Regression Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Cache Python packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Cache Playwright browsers
+      id: playwright-cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Install Node.js dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install --with-deps chromium
+
+    - name: Install Playwright system dependencies
+      if: steps.playwright-cache.outputs.cache-hit == 'true'
+      run: npx playwright install-deps chromium
+
+    - name: Run visual regression tests
+      run: npx playwright test tests/playwright/visual.spec.ts
+      env:
+        CI: true
+
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-visual
+        path: playwright-report/
+        retention-days: 14
+
+    - name: Upload failed screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: visual-regression-failures
+        path: tests/playwright/*.png
+        retention-days: 7
+
+  accessibility:
+    name: Accessibility Tests (axe-core)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Cache Python packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        npm ci
+        npx playwright install --with-deps chromium
+
+    - name: Run accessibility tests
+      run: npx playwright test tests/playwright/a11y.spec.ts
+      env:
+        CI: true
+
+    - name: Upload accessibility report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-a11y
+        path: playwright-report/
+        retention-days: 14
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run pip-audit
+      run: |
+        python -m pip_audit --skip-editable --format json --output security_audit.json
+      continue-on-error: false
+
+    - name: Check for secrets
+      run: |
+        echo "🔍 Scanning for potential secrets..."
+
+        # Check for hardcoded passwords
+        if grep -r -i "password.*=.*['\"].*['\"]" src/ --include="*.py" | grep -v "ADMIN_PASSWORD" | grep -v "os.getenv\|os.environ"; then
+          echo "❌ Found hardcoded passwords"
+          exit 1
+        fi
+
+        # Check for hardcoded SECRET_KEY
+        if grep -r "SECRET_KEY.*=.*['\"]" src/ --include="*.py" | grep -v "os.getenv\|os.environ"; then
+          echo "❌ Found hardcoded SECRET_KEY"
+          exit 1
+        fi
+
+        echo "✅ No hardcoded secrets found"
+
+    - name: Verify CSRF protection
+      run: |
+        if ! grep -q "csrf.init_app" src/main.py; then
+          echo "❌ CSRF protection not initialized"
+          exit 1
+        fi
+        echo "✅ CSRF protection verified"
+
+    - name: Verify rate limiting
+      run: |
+        if ! grep -q "limiter.init_app" src/main.py; then
+          echo "❌ Rate limiting not initialized"
+          exit 1
+        fi
+        echo "✅ Rate limiting verified"
+
+    - name: Upload security audit
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-audit
+        path: security_audit.json
+        retention-days: 30
+
+  e2e-tests:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/pip
+          ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+        key: ${{ runner.os }}-e2e-${{ hashFiles('requirements.txt', 'package-lock.json') }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        npm ci
+        npx playwright install --with-deps chromium
+
+    - name: Run E2E tests
+      run: npx playwright test tests/playwright/e2e.spec.ts
+      env:
+        CI: true
+
+    - name: Upload E2E report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-e2e
+        path: playwright-report/
+        retention-days: 14
+
+  summary:
+    name: TPA Summary
+    runs-on: ubuntu-latest
+    needs: [visual-regression, accessibility, security, e2e-tests]
+    if: always()
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Generate TPA summary
+      run: |
+        echo "# 🎯 Total Product Audit Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Quality Gate | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Visual Regression | ${{ needs.visual-regression.result == 'success' && '✅ Passing' || '❌ Failing' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Accessibility | ${{ needs.accessibility.result == 'success' && '✅ Passing' || '❌ Failing' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Security Audit | ${{ needs.security.result == 'success' && '✅ Passing' || '❌ Failing' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| E2E Tests | ${{ needs.e2e-tests.result == 'success' && '✅ Passing' || '❌ Failing' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        # Calculate health score
+        passing=0
+        total=4
+
+        [ "${{ needs.visual-regression.result }}" == "success" ] && passing=$((passing + 1))
+        [ "${{ needs.accessibility.result }}" == "success" ] && passing=$((passing + 1))
+        [ "${{ needs.security.result }}" == "success" ] && passing=$((passing + 1))
+        [ "${{ needs.e2e-tests.result }}" == "success" ] && passing=$((passing + 1))
+
+        health_score=$((passing * 100 / total))
+        echo "**Health Score:** ${health_score}/100" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ $passing -eq $total ]; then
+          echo "🎉 All quality gates passed!" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ Some quality gates failed. Review artifacts for details." >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Check blocking violations
+      run: |
+        # Block merge if critical quality gates fail
+        if [ "${{ needs.visual-regression.result }}" != "success" ]; then
+          echo "❌ Visual regression tests failed - blocking merge"
+          exit 1
+        fi
+
+        if [ "${{ needs.security.result }}" != "success" ]; then
+          echo "❌ Security audit failed - blocking merge"
+          exit 1
+        fi
+
+        if [ "${{ needs.e2e-tests.result }}" != "success" ]; then
+          echo "❌ E2E tests failed - blocking merge"
+          exit 1
+        fi
+
+        # Accessibility is non-blocking but warns
+        if [ "${{ needs.accessibility.result }}" != "success" ]; then
+          echo "⚠️ Accessibility tests failed - review recommended but not blocking"
+        fi
+
+        echo "✅ All blocking quality gates passed"
+
+  notify-slack:
+    name: Notify Slack
+    runs-on: ubuntu-latest
+    needs: [summary]
+    if: failure() && github.event_name != 'pull_request'
+
+    steps:
+    - name: Send Slack notification
+      uses: slackapi/slack-github-action@v1.26.0
+      with:
+        payload: |
+          {
+            "text": "🚨 TPA Quality Gate Failed",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*TPA Quality Gate Failed*\n\n*Repository:* ${{ github.repository }}\n*Branch:* ${{ github.ref_name }}\n*Commit:* <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.sha }}>\n*Workflow:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+                }
+              }
+            ]
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
