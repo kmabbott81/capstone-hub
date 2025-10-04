@@ -41,6 +41,11 @@ smoke: verify-build validate-env
 	@python scripts/verify_headers.py || true
 	@echo ""
 	@echo "============================================"
+	@echo "Generating Telemetry Summary..."
+	@echo "============================================"
+	@python scripts/telemetry_lite.py || true
+	@echo ""
+	@echo "============================================"
 	@echo "Smoke Test Complete"
 	@echo "============================================"
 	@echo "Review proof artifacts:"
@@ -48,6 +53,7 @@ smoke: verify-build validate-env
 	@echo "  - security/build_snapshot/rate_limit_proof.txt"
 	@echo "  - security/build_snapshot/headers_verify.txt"
 	@echo "  - security/endpoint_coverage/routes_manifest.json"
+	@echo "  - logs/telemetry_summary.log"
 
 # Build verification
 verify-build:
