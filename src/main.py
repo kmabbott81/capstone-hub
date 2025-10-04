@@ -1,5 +1,7 @@
 import os
 import sys
+import json
+import logging
 # DON'T CHANGE THIS !!!
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -24,6 +26,7 @@ from src.routes.advanced_features import advanced_features_bp
 from src.routes.integrations import integrations_bp
 from src.routes.auth import auth_bp
 from src.routes.admin import admin_bp
+from src.routes.debug import debug_bp
 from flask_cors import CORS
 from src.extensions import csrf, limiter
 
@@ -55,6 +58,10 @@ app.register_blueprint(advanced_features_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(admin_bp)
 
+# Register debug routes only when enabled (staging only)
+if os.environ.get("ENABLE_DEBUG_ROUTES") == "1":
+    app.register_blueprint(debug_bp)
+
 # uncomment if you need to use database
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -67,6 +74,18 @@ with app.app_context():
 def get_csrf_token():
     """Get CSRF token for client-side requests"""
     return jsonify({'csrf_token': generate_csrf()})
+
+# CSP violation reporting endpoint
+@app.route("/csp-report", methods=["POST"])
+def csp_report():
+    """Collect CSP violations during staging; keep enforcement ON."""
+    try:
+        data = (json.loads(request.data.decode("utf-8"))
+                if request.data else {"empty": True})
+        logging.getLogger("csp").warning("CSPVIOLATION %s", data)
+    except Exception as e:
+        logging.getLogger("csp").error("CSPREPORT_ERROR %s", e)
+    return "", 204
 
 # Idle timeout middleware
 @app.before_request
@@ -98,7 +117,8 @@ def set_security_headers(response):
         "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
         "script-src 'self' https://cdnjs.cloudflare.com; "
         "font-src 'self' data: https://cdnjs.cloudflare.com; "
-        "connect-src 'self'"
+        "connect-src 'self'; "
+        "report-uri /csp-report"
     )
     return response
 
