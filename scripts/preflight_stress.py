@@ -63,7 +63,10 @@ async def idle_timeout(session, token):
     h = {"X-Debug-Key": DEBUG_KEY}
     async with session.post(f"{BASE}/api/_debug/set_last_seen",
                             json={"ago_seconds": 1900}, headers=h) as r:
-        _ = await r.json()
+        if r.status == 200:
+            _ = await r.json()
+        else:
+            print(f"   Debug endpoint returned {r.status}")
     # now attempt a write -> should 401
     h2 = dict(HEADERS); h2["X-CSRFToken"] = token
     async with session.post(f"{BASE}/api/deliverables",
@@ -92,6 +95,9 @@ async def main():
         # Wrong-password burst - expect 429 on last call
         codes = await burst_login_rate_limit(session)
         print(">> Login burst:", codes)
+
+        # Wait 1 second for rate limit window to pass
+        await asyncio.sleep(1)
 
         # Login as admin
         ok = await login(session)
