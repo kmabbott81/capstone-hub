@@ -26,65 +26,57 @@ test.describe('Visual Regression - Pages', () => {
     // Wait for metrics to load
     await page.waitForSelector('.metrics-row');
 
-    await expect(page).toHaveScreenshot('dashboard.png', {
-      fullPage: true,
-      maxDiffPixels: 100, // Allow small rendering differences
-    });
+    await expect(page).toHaveScreenshot('dashboard.png', { fullPage: true });
   });
 
   test('Business Processes page matches snapshot', async ({ page }) => {
     await page.goto('/#processes');
     await page.waitForSelector('#processes.content-section.active');
 
-    await expect(page).toHaveScreenshot('business-processes.png', {
-      fullPage: true,
-      maxDiffPixels: 100,
-    });
+    await expect(page).toHaveScreenshot('business-processes.png', { fullPage: true });
   });
 
   test('Deliverables Timeline page matches snapshot', async ({ page }) => {
     await page.goto('/#deliverables');
     await page.waitForSelector('#deliverables.content-section.active');
 
-    await expect(page).toHaveScreenshot('deliverables.png', {
-      fullPage: true,
-      maxDiffPixels: 100,
-    });
+    await expect(page).toHaveScreenshot('deliverables.png', { fullPage: true });
   });
 
   test('AI Technologies page matches snapshot', async ({ page }) => {
     await page.goto('/#ai-technologies');
     await page.waitForSelector('#ai-technologies.content-section.active');
 
-    await expect(page).toHaveScreenshot('ai-technologies.png', {
-      fullPage: true,
-      maxDiffPixels: 100,
-    });
+    await expect(page).toHaveScreenshot('ai-technologies.png', { fullPage: true });
   });
 
   test('Research Management page matches snapshot', async ({ page }) => {
     await page.goto('/#research');
     await page.waitForSelector('#research.content-section.active');
 
-    await expect(page).toHaveScreenshot('research.png', {
-      fullPage: true,
-      maxDiffPixels: 100,
-    });
+    await expect(page).toHaveScreenshot('research.png', { fullPage: true });
   });
 
   test('Integrations page matches snapshot', async ({ page }) => {
     await page.goto('/#integrations');
     await page.waitForSelector('#integrations.content-section.active');
 
-    await expect(page).toHaveScreenshot('integrations.png', {
-      fullPage: true,
-      maxDiffPixels: 100,
-    });
+    await expect(page).toHaveScreenshot('integrations.png', { fullPage: true });
   });
 });
 
 test.describe('Visual Regression - Dark Mode', () => {
   test.beforeEach(async ({ page }) => {
+    // Bypass cache to ensure fresh rendering
+    await page.route('**/*', (route) =>
+      route.continue({
+        headers: {
+          ...route.request().headers(),
+          'Cache-Control': 'no-store'
+        }
+      })
+    );
+
     await page.goto('/login.html');
     await page.fill('input[name="username"]', 'admin');
     await page.fill('input[name="password"]', process.env.ADMIN_PASSWORD || 'TestAdmin123!');
@@ -96,13 +88,10 @@ test.describe('Visual Regression - Dark Mode', () => {
     // Toggle dark mode
     await page.click('[data-action="toggle-theme"]');
 
-    // Wait for theme to apply
-    await page.waitForTimeout(200);
+    // Wait for theme to apply (localStorage + CSS)
+    await page.waitForTimeout(300);
 
-    await expect(page).toHaveScreenshot('dashboard-dark.png', {
-      fullPage: true,
-      maxDiffPixels: 100,
-    });
+    await expect(page).toHaveScreenshot('dashboard-dark.png', { fullPage: true });
   });
 });
 

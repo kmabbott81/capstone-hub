@@ -57,6 +57,20 @@ export default defineConfig({
     ignoreHTTPSErrors: !process.env.CI,
   },
 
+  /* Visual regression thresholds */
+  expect: {
+    toHaveScreenshot: {
+      /* Allow 0.1% pixel difference to account for font rendering variations */
+      maxDiffPixelRatio: 0.001,
+
+      /* Animation settling */
+      animations: 'disabled',
+
+      /* Consistent rendering */
+      scale: 'css',
+    },
+  },
+
   /* Configure projects for major browsers */
   projects: [
     {
