@@ -76,7 +76,6 @@ def update_business_process(process_id):
 
 @business_processes_bp.route('/api/business-processes/<int:process_id>', methods=['DELETE'])
 @require_admin
-
 def delete_business_process(process_id):
     """Delete a business process"""
     process = BusinessProcess.query.get(process_id)

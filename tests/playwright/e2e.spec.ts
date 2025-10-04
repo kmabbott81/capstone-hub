@@ -54,6 +54,85 @@ test.describe('E2E: Authentication Flow', () => {
   });
 });
 
+test.describe('E2E: Business Process Management', () => {
+  test.beforeEach(async ({ page }) => {
+    // Login as admin before each test
+    await page.goto('/');
+    await page.fill('input[name="username"]', 'admin');
+    await page.fill('input[name="password"]', process.env.ADMIN_PASSWORD || 'CapstoneAdmin');
+    await page.click('button[type="submit"]');
+    await page.waitForSelector('#dashboard.content-section.active');
+  });
+
+  test('Delete business process works end-to-end', async ({ page }) => {
+    // Navigate to business processes section
+    await page.click('[data-section="business-processes"]');
+    await page.waitForSelector('#business-processes.content-section.active');
+
+    // Check if any processes exist
+    const processCards = page.locator('.process-card');
+    const count = await processCards.count();
+
+    if (count === 0) {
+      // Skip test if no processes exist
+      test.skip();
+      return;
+    }
+
+    // Find first delete button
+    const deleteBtn = page.locator('[data-action="delete-process"]').first();
+    const processId = await deleteBtn.getAttribute('data-id');
+
+    // Click delete button
+    page.on('dialog', dialog => dialog.accept());
+    await deleteBtn.click();
+
+    // Wait for DELETE API call
+    const response = await page.waitForResponse(
+      resp => resp.url().includes(`/api/business-processes/${processId}`) && resp.request().method() === 'DELETE'
+    );
+
+    // Verify response is successful
+    expect(response.status()).toBeGreaterThanOrEqual(200);
+    expect(response.status()).toBeLessThan(300);
+
+    // Verify DOM updated (card removed)
+    const newCount = await processCards.count();
+    expect(newCount).toBe(count - 1);
+  });
+
+  test('Business process delete sends CSRF token', async ({ page }) => {
+    // Navigate to business processes
+    await page.click('[data-section="business-processes"]');
+    await page.waitForSelector('#business-processes.content-section.active');
+
+    // Skip if no processes
+    const deleteBtn = page.locator('[data-action="delete-process"]').first();
+    if (await deleteBtn.count() === 0) {
+      test.skip();
+      return;
+    }
+
+    // Intercept DELETE request
+    let csrfToken = null;
+    page.on('request', request => {
+      if (request.url().includes('/api/business-processes/') && request.method() === 'DELETE') {
+        csrfToken = request.headers()['x-csrftoken'];
+      }
+    });
+
+    // Trigger delete
+    page.on('dialog', dialog => dialog.accept());
+    await deleteBtn.click();
+
+    // Wait for request to complete
+    await page.waitForTimeout(1000);
+
+    // Verify CSRF token was sent
+    expect(csrfToken).toBeTruthy();
+  });
+});
+
 test.describe('E2E: Deliverable Management', () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin before each test
