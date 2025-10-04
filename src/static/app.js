@@ -813,6 +813,171 @@ class CapstoneHub {
         }
     }
 
+    // Deliverable CRUD operations
+    editDeliverable(id) {
+        showNotification('Edit deliverable functionality coming soon', 'info');
+    }
+
+    async deleteDeliverable(id) {
+        if (!confirm('Are you sure you want to delete this deliverable?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/deliverables/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.ok) {
+                this.data.deliverables = this.data.deliverables.filter(d => d.id !== id);
+                this.loadDeliverables();
+                this.updateDashboard();
+                showNotification('Deliverable deleted successfully!', 'success');
+            } else {
+                const error = await response.json();
+                showNotification(error.error || 'Error deleting deliverable', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting deliverable:', error);
+            showNotification('Error deleting deliverable', 'error');
+        }
+    }
+
+    // AI Technology CRUD operations
+    editAITechnology(id) {
+        showNotification('Edit AI technology functionality coming soon', 'info');
+    }
+
+    async deleteAITechnology(id) {
+        if (!confirm('Are you sure you want to delete this AI technology?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/ai-technologies/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.ok) {
+                this.data.aiTechnologies = this.data.aiTechnologies.filter(t => t.id !== id);
+                this.loadAITechnologies();
+                this.updateDashboard();
+                showNotification('AI technology deleted successfully!', 'success');
+            } else {
+                const error = await response.json();
+                showNotification(error.error || 'Error deleting AI technology', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting AI technology:', error);
+            showNotification('Error deleting AI technology', 'error');
+        }
+    }
+
+    // Software Tool CRUD operations
+    editSoftwareTool(id) {
+        showNotification('Edit software tool functionality coming soon', 'info');
+    }
+
+    async deleteSoftwareTool(id) {
+        if (!confirm('Are you sure you want to delete this software tool?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/software-tools/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.ok) {
+                this.data.softwareTools = this.data.softwareTools.filter(t => t.id !== id);
+                this.loadSoftwareTools();
+                this.updateDashboard();
+                showNotification('Software tool deleted successfully!', 'success');
+            } else {
+                const error = await response.json();
+                showNotification(error.error || 'Error deleting software tool', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting software tool:', error);
+            showNotification('Error deleting software tool', 'error');
+        }
+    }
+
+    // Research Item CRUD operations
+    editResearchItem(id) {
+        showNotification('Edit research item functionality coming soon', 'info');
+    }
+
+    async deleteResearchItem(id) {
+        if (!confirm('Are you sure you want to delete this research item?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/research-items/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.ok) {
+                this.data.researchItems = this.data.researchItems.filter(r => r.id !== id);
+                this.loadResearchItems();
+                this.updateDashboard();
+                showNotification('Research item deleted successfully!', 'success');
+            } else {
+                const error = await response.json();
+                showNotification(error.error || 'Error deleting research item', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting research item:', error);
+            showNotification('Error deleting research item', 'error');
+        }
+    }
+
+    // Integration CRUD operations
+    editIntegration(id) {
+        showNotification('Edit integration functionality coming soon', 'info');
+    }
+
+    async deleteIntegration(id) {
+        if (!confirm('Are you sure you want to delete this integration?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/integrations/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.ok) {
+                this.data.integrations = this.data.integrations.filter(i => i.id !== id);
+                this.loadIntegrations();
+                this.updateDashboard();
+                showNotification('Integration deleted successfully!', 'success');
+            } else {
+                const error = await response.json();
+                showNotification(error.error || 'Error deleting integration', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting integration:', error);
+            showNotification('Error deleting integration', 'error');
+        }
+    }
+
     addAITechnology() {
         const form = `
             <form id="ai-tech-form">
