@@ -85,48 +85,75 @@ def create_software_tool():
 def update_software_tool(tool_id):
     """Update an existing software tool"""
     data = request.get_json()
-    
-    for tool in software_tools_data:
-        if tool['id'] == tool_id:
-            tool.update({
-                'name': data.get('name', tool['name']),
-                'description': data.get('description', tool['description']),
-                'category': data.get('category', tool['category']),
-                'tool_type': data.get('tool_type', tool['tool_type']),
-                'vendor': data.get('vendor', tool['vendor']),
-                'version': data.get('version', tool['version']),
-                'pricing_model': data.get('pricing_model', tool['pricing_model']),
-                'monthly_cost': data.get('monthly_cost', tool['monthly_cost']),
-                'annual_cost': data.get('annual_cost', tool['annual_cost']),
-                'user_licenses': data.get('user_licenses', tool['user_licenses']),
-                'features': data.get('features', tool['features']),
-                'integrations': data.get('integrations', tool['integrations']),
-                'pros': data.get('pros', tool['pros']),
-                'cons': data.get('cons', tool['cons']),
-                'evaluation_status': data.get('evaluation_status', tool['evaluation_status']),
-                'evaluation_score': data.get('evaluation_score', tool['evaluation_score']),
-                'implementation_complexity': data.get('implementation_complexity', tool['implementation_complexity']),
-                'training_required': data.get('training_required', tool['training_required']),
-                'support_quality': data.get('support_quality', tool['support_quality']),
-                'security_rating': data.get('security_rating', tool['security_rating']),
-                'scalability': data.get('scalability', tool['scalability']),
-                'business_impact': data.get('business_impact', tool['business_impact']),
-                'technical_requirements': data.get('technical_requirements', tool['technical_requirements']),
-                'decision_status': data.get('decision_status', tool['decision_status']),
-                'notes': data.get('notes', tool['notes']),
-                'updated_at': datetime.now().isoformat()
-            })
-            return jsonify(tool)
-    
-    return jsonify({'error': 'Software tool not found'}), 404
+    tool = SoftwareTool.query.get(tool_id)
+
+    if not tool:
+        return jsonify({'error': 'Software tool not found'}), 404
+
+    try:
+        tool.name = data.get('name', tool.name)
+        tool.description = data.get('description', tool.description)
+        tool.category = data.get('category', tool.category)
+        tool.tool_type = data.get('tool_type', tool.tool_type)
+        tool.vendor = data.get('vendor', tool.vendor)
+        tool.pricing_model = data.get('pricing_model', tool.pricing_model)
+        tool.pricing_details = data.get('pricing_details', tool.pricing_details)
+        tool.features = data.get('features', tool.features)
+        tool.hl_stearns_fit = data.get('hl_stearns_fit', tool.hl_stearns_fit)
+        tool.current_usage = data.get('current_usage', tool.current_usage)
+        tool.replacement_for = data.get('replacement_for', tool.replacement_for)
+        tool.integration_capabilities = data.get('integration_capabilities', tool.integration_capabilities)
+        tool.data_migration_complexity = data.get('data_migration_complexity', tool.data_migration_complexity)
+        tool.training_requirements = data.get('training_requirements', tool.training_requirements)
+        tool.support_quality = data.get('support_quality', tool.support_quality)
+        tool.scalability = data.get('scalability', tool.scalability)
+        tool.security_features = data.get('security_features', tool.security_features)
+        tool.mobile_support = data.get('mobile_support', tool.mobile_support)
+        tool.cloud_based = data.get('cloud_based', tool.cloud_based)
+        tool.on_premise_option = data.get('on_premise_option', tool.on_premise_option)
+        tool.api_quality = data.get('api_quality', tool.api_quality)
+        tool.customization_level = data.get('customization_level', tool.customization_level)
+        tool.evaluation_status = data.get('evaluation_status', tool.evaluation_status)
+        tool.implementation_priority = data.get('implementation_priority', tool.implementation_priority)
+        tool.roi_potential = data.get('roi_potential', tool.roi_potential)
+        tool.risk_level = data.get('risk_level', tool.risk_level)
+        tool.decision_status = data.get('decision_status', tool.decision_status)
+        tool.pilot_results = data.get('pilot_results', tool.pilot_results)
+        tool.notes = data.get('notes', tool.notes)
+        tool.updated_at = datetime.utcnow()
+
+        db.session.commit()
+        return jsonify({
+            'id': tool.id,
+            'name': tool.name,
+            'description': tool.description,
+            'category': tool.category,
+            'vendor': tool.vendor,
+            'tool_type': tool.tool_type,
+            'evaluation_status': tool.evaluation_status,
+            'created_at': tool.created_at.isoformat(),
+            'updated_at': tool.updated_at.isoformat()
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @software_tools_bp.route('/api/software-tools/<int:tool_id>', methods=['DELETE'])
 @require_admin
 def delete_software_tool(tool_id):
     """Delete a software tool"""
-    global software_tools_data
-    software_tools_data = [t for t in software_tools_data if t['id'] != tool_id]
-    return jsonify({'message': 'Software tool deleted successfully'})
+    tool = SoftwareTool.query.get(tool_id)
+
+    if not tool:
+        return jsonify({'error': 'Software tool not found'}), 404
+
+    try:
+        db.session.delete(tool)
+        db.session.commit()
+        return jsonify({'message': 'Software tool deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @software_tools_bp.route('/api/software-tools/categories', methods=['GET'])
 def get_tool_categories():

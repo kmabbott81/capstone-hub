@@ -55,46 +55,66 @@ def create_ai_technology():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@require_admin
 @ai_technologies_bp.route('/api/ai-technologies/<int:tech_id>', methods=['PUT'])
+@require_admin
 def update_ai_technology(tech_id):
     """Update an existing AI technology"""
     data = request.get_json()
-    
-    for tech in ai_tech_data:
-        if tech['id'] == tech_id:
-            tech.update({
-                'name': data.get('name', tech['name']),
-                'description': data.get('description', tech['description']),
-                'category': data.get('category', tech['category']),
-                'subcategory': data.get('subcategory', tech['subcategory']),
-                'provider': data.get('provider', tech['provider']),
-                'platform': data.get('platform', tech['platform']),
-                'use_cases': data.get('use_cases', tech['use_cases']),
-                'capabilities': data.get('capabilities', tech['capabilities']),
-                'limitations': data.get('limitations', tech['limitations']),
-                'pricing_model': data.get('pricing_model', tech['pricing_model']),
-                'integration_complexity': data.get('integration_complexity', tech['integration_complexity']),
-                'evaluation_status': data.get('evaluation_status', tech['evaluation_status']),
-                'priority': data.get('priority', tech['priority']),
-                'business_impact': data.get('business_impact', tech['business_impact']),
-                'technical_requirements': data.get('technical_requirements', tech['technical_requirements']),
-                'security_considerations': data.get('security_considerations', tech['security_considerations']),
-                'roi_potential': data.get('roi_potential', tech['roi_potential']),
-                'implementation_timeline': data.get('implementation_timeline', tech['implementation_timeline']),
-                'updated_at': datetime.now().isoformat()
-            })
-            return jsonify(tech)
-    
-    return jsonify({'error': 'AI technology not found'}), 404
+    tech = AITechnology.query.get(tech_id)
 
-@require_admin
+    if not tech:
+        return jsonify({'error': 'AI technology not found'}), 404
+
+    try:
+        tech.name = data.get('name', tech.name)
+        tech.description = data.get('description', tech.description)
+        tech.category = data.get('category', tech.category)
+        tech.subcategory = data.get('subcategory', tech.subcategory)
+        tech.platform_provider = data.get('platform_provider', tech.platform_provider)
+        tech.pricing_model = data.get('pricing_model', tech.pricing_model)
+        tech.pricing_details = data.get('pricing_details', tech.pricing_details)
+        tech.use_cases = data.get('use_cases', tech.use_cases)
+        tech.hl_stearns_applications = data.get('hl_stearns_applications', tech.hl_stearns_applications)
+        tech.integration_complexity = data.get('integration_complexity', tech.integration_complexity)
+        tech.technical_requirements = data.get('technical_requirements', tech.technical_requirements)
+        tech.data_requirements = data.get('data_requirements', tech.data_requirements)
+        tech.security_considerations = data.get('security_considerations', tech.security_considerations)
+        tech.evaluation_status = data.get('evaluation_status', tech.evaluation_status)
+        tech.pilot_status = data.get('pilot_status', tech.pilot_status)
+        tech.roi_potential = data.get('roi_potential', tech.roi_potential)
+        tech.implementation_priority = data.get('implementation_priority', tech.implementation_priority)
+        tech.competitive_advantage = data.get('competitive_advantage', tech.competitive_advantage)
+        tech.learning_curve = data.get('learning_curve', tech.learning_curve)
+        tech.vendor_support = data.get('vendor_support', tech.vendor_support)
+        tech.api_availability = data.get('api_availability', tech.api_availability)
+        tech.custom_training_possible = data.get('custom_training_possible', tech.custom_training_possible)
+        tech.on_premise_option = data.get('on_premise_option', tech.on_premise_option)
+        tech.compliance_ready = data.get('compliance_ready', tech.compliance_ready)
+        tech.notes = data.get('notes', tech.notes)
+        tech.updated_at = datetime.utcnow()
+
+        db.session.commit()
+        return jsonify(tech.to_dict())
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
 @ai_technologies_bp.route('/api/ai-technologies/<int:tech_id>', methods=['DELETE'])
+@require_admin
 def delete_ai_technology(tech_id):
     """Delete an AI technology"""
-    global ai_tech_data
-    ai_tech_data = [t for t in ai_tech_data if t['id'] != tech_id]
-    return jsonify({'message': 'AI technology deleted successfully'})
+    tech = AITechnology.query.get(tech_id)
+
+    if not tech:
+        return jsonify({'error': 'AI technology not found'}), 404
+
+    try:
+        db.session.delete(tech)
+        db.session.commit()
+        return jsonify({'message': 'AI technology deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @ai_technologies_bp.route('/api/ai-technologies/categories', methods=['GET'])
 def get_ai_categories():
