@@ -26,7 +26,7 @@ for i in {1..6}; do
         retry_after=$(echo "$response" | grep -i "Retry-After:" || echo "  (header not found)")
         echo "$retry_after" | tee -a "$OUTPUT_FILE"
         echo "" | tee -a "$OUTPUT_FILE"
-        echo "✅ Rate limit enforced: 429 received on attempt $i" | tee -a "$OUTPUT_FILE"
+        echo "[OK] Rate limit enforced: 429 received on attempt $i" | tee -a "$OUTPUT_FILE"
         exit 0
     fi
 
@@ -35,5 +35,5 @@ for i in {1..6}; do
 done
 
 echo "" | tee -a "$OUTPUT_FILE"
-echo "❌ Expected 429 on attempt 6, but none received" | tee -a "$OUTPUT_FILE"
+echo "[FAIL] Expected 429 on attempt 6, but none received" | tee -a "$OUTPUT_FILE"
 exit 1

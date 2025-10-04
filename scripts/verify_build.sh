@@ -41,10 +41,11 @@ echo ""
 
 # 3. Generate and validate route manifest
 echo "[3/4] Generating route manifest..."
-if python scripts/generate_route_manifest.py > /tmp/routes_manifest_test.json 2>&1; then
-    ADMIN_COUNT=$(python -c "import json; d=json.load(open('/tmp/routes_manifest_test.json')); print(d['summary']['admin_protected'])")
+TEMP_MANIFEST="security/build_snapshot/routes_manifest_test.json"
+if python scripts/generate_route_manifest.py > "$TEMP_MANIFEST" 2>&1; then
+    ADMIN_COUNT=$(python -c "import json; d=json.load(open('$TEMP_MANIFEST')); print(d['summary']['admin_protected'])")
     echo "  ✅ Route manifest generated: $ADMIN_COUNT routes with admin protection"
-    rm /tmp/routes_manifest_test.json
+    rm -f "$TEMP_MANIFEST"
 else
     echo "  ❌ Route manifest generation failed"
     FAILED=1

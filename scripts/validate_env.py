@@ -51,10 +51,10 @@ def check_variable(name, description, required=False):
         else:
             display_value = value
 
-        print(f"  {Colors.GREEN}✓{Colors.END} {name:25} = {display_value}")
+        print(f"  {Colors.GREEN}[OK]{Colors.END} {name:25} = {display_value}")
         return True
     else:
-        status = f"{Colors.RED}✗{Colors.END}" if required else f"{Colors.YELLOW}⚠{Colors.END}"
+        status = f"{Colors.RED}[X]{Colors.END}" if required else f"{Colors.YELLOW}[!]{Colors.END}"
         req_label = "(REQUIRED)" if required else "(optional)"
         print(f"  {status} {name:25} {req_label} - {description}")
         return not required
@@ -65,11 +65,11 @@ def check_security(name, expected, description):
     value = os.environ.get(name, '')
 
     if value == expected:
-        print(f"  {Colors.GREEN}✓{Colors.END} {name:25} = {expected}")
+        print(f"  {Colors.GREEN}[OK]{Colors.END} {name:25} = {expected}")
         return True
     else:
         actual = value if value else "(not set)"
-        print(f"  {Colors.YELLOW}⚠{Colors.END} {name:25} = {actual} (expected: {expected})")
+        print(f"  {Colors.YELLOW}[!]{Colors.END} {name:25} = {actual} (expected: {expected})")
         print(f"      {description}")
         return False
 
@@ -101,11 +101,11 @@ def main():
             has_viewer = True
 
     if not has_admin:
-        print(f"  {Colors.RED}✗{Colors.END} No admin password configured (HASH or PLAIN)")
+        print(f"  {Colors.RED}[X]{Colors.END} No admin password configured (HASH or PLAIN)")
         all_ok = False
 
     if not has_viewer:
-        print(f"  {Colors.YELLOW}⚠{Colors.END} No viewer password configured (will use default)")
+        print(f"  {Colors.YELLOW}[!]{Colors.END} No viewer password configured (will use default)")
 
     print()
 
@@ -120,13 +120,13 @@ def main():
     # Print readiness banner
     print(f"{Colors.BOLD}{'='*60}{Colors.END}")
     if all_ok:
-        print(f"{Colors.BOLD}{Colors.GREEN}✅ ENVIRONMENT READY{Colors.END}")
+        print(f"{Colors.BOLD}{Colors.GREEN}[OK] ENVIRONMENT READY{Colors.END}")
         print(f"{Colors.BOLD}{'='*60}{Colors.END}\n")
         print("All required environment variables are set.")
         print("You can safely start the application.")
         return 0
     else:
-        print(f"{Colors.BOLD}{Colors.RED}❌ ENVIRONMENT NOT READY{Colors.END}")
+        print(f"{Colors.BOLD}{Colors.RED}[X] ENVIRONMENT NOT READY{Colors.END}")
         print(f"{Colors.BOLD}{'='*60}{Colors.END}\n")
         print("Required environment variables are missing.")
         print("Set them before starting the application:")

@@ -1,0 +1,13 @@
+Admin Guard Verification - 2025-10-04T12:03:22.592019
+Target: https://mabbottmbacapstone.up.railway.app
+
+[1/3] Testing unauthenticated write...
+  -> Status: 400 (expect 400/401)
+
+[2/3] Testing viewer (non-admin) write...
+  -> Status: 403 (expect 403)
+
+[3/3] Testing admin write...
+  -> Status: 401 (expect 200/201)
+
+[FAIL] Test failed: Expected 200/201, got 401

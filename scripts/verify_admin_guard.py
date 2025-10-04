@@ -23,7 +23,7 @@ def main():
     print("[1/3] Testing unauthenticated write...")
     resp = session.post(f"{BASE_URL}/api/deliverables",
                         json={"title": "Unauthorized Test"})
-    print(f"  → Status: {resp.status_code} (expect 400/401)")
+    print(f"  -> Status: {resp.status_code} (expect 400/401)")
     assert resp.status_code in [400, 401], f"Expected 400/401, got {resp.status_code}"
 
     # Test 2: Viewer (non-admin) write should fail with 403
@@ -37,7 +37,7 @@ def main():
     resp = session.post(f"{BASE_URL}/api/deliverables",
                         json={"title": "Viewer Test"},
                         headers={"X-CSRFToken": csrf_token})
-    print(f"  → Status: {resp.status_code} (expect 403)")
+    print(f"  -> Status: {resp.status_code} (expect 403)")
     assert resp.status_code == 403, f"Expected 403, got {resp.status_code}"
 
     # Test 3: Admin write should succeed with 200/201
@@ -51,7 +51,7 @@ def main():
     resp = session.post(f"{BASE_URL}/api/deliverables",
                         json={"title": "Admin Test", "description": "Verification test"},
                         headers={"X-CSRFToken": csrf_token})
-    print(f"  → Status: {resp.status_code} (expect 200/201)")
+    print(f"  -> Status: {resp.status_code} (expect 200/201)")
 
     if resp.status_code in [200, 201]:
         # Cleanup
@@ -62,7 +62,7 @@ def main():
 
     assert resp.status_code in [200, 201], f"Expected 200/201, got {resp.status_code}"
 
-    print("\n✅ All admin guard tests passed!")
+    print("\n[OK] All admin guard tests passed!")
     print("  - Unauthenticated users blocked")
     print("  - Viewer role blocked from writes")
     print("  - Admin role allowed writes")
@@ -71,8 +71,8 @@ if __name__ == "__main__":
     try:
         main()
     except AssertionError as e:
-        print(f"\n❌ Test failed: {e}")
+        print(f"\n[FAIL] Test failed: {e}")
         sys.exit(1)
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n[ERROR] Error: {e}")
         sys.exit(1)

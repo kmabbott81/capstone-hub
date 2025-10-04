@@ -1,0 +1,18 @@
+Rate Limit Verification - 2025-10-04T12:03:57-07:00
+Target: https://mabbottmbacapstone.up.railway.app/api/auth/login
+Policy: 5 attempts per 15 minutes
+
+[Attempt 1/6]
+  HTTP/1.1 401 Unauthorized
+[Attempt 2/6]
+  HTTP/1.1 401 Unauthorized
+[Attempt 3/6]
+  HTTP/1.1 401 Unauthorized
+[Attempt 4/6]
+  HTTP/1.1 401 Unauthorized
+[Attempt 5/6]
+  HTTP/1.1 401 Unauthorized
+[Attempt 6/6]
+  HTTP/1.1 401 Unauthorized
+
+[FAIL] Expected 429 on attempt 6, but none received
